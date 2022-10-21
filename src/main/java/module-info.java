@@ -10,4 +10,8 @@ module com.example.javafxproject {
 
     opens com.example.javafxproject to javafx.fxml;
     exports com.example.javafxproject;
+    exports controllers;
+    opens controllers to javafx.fxml;
+    exports models;
+    opens models to javafx.fxml;
 }

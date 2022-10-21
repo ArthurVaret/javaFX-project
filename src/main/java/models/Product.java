@@ -1,18 +1,17 @@
-package com.example.javafxproject;
+package models;
 
-import java.awt.*;
+import javafx.scene.image.Image;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
-public class product {
+public abstract class Product {
     private int id;
     private String name;
-    private String size;
-    private String type;
     private String colour;
     private int stock;
-    private float price;
-    private float cost;
-    private float promo;
-    private java.awt.Image image;
+    private double price;
+    private double cost;
+    private Image image;
 
     public int getId() {
         return id;
@@ -28,22 +27,6 @@ public class product {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getColour() {
@@ -62,7 +45,7 @@ public class product {
         this.stock = stock;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
 
@@ -70,20 +53,12 @@ public class product {
         this.price = price;
     }
 
-    public float getCost() {
+    public double getCost() {
         return cost;
     }
 
     public void setCost(float cost) {
         this.cost = cost;
-    }
-
-    public float getPromo() {
-        return promo;
-    }
-
-    public void setPromo(float promo) {
-        this.promo = promo;
     }
 
     public Image getImage() {
@@ -94,36 +69,33 @@ public class product {
         this.image = image;
     }
 
-    public product(int id, String name, String size, String type, String colour, int stock, float price, float cost, float promo, Image image) {
+    public Product(int id, String name, double price, int stock, String colour, double cost, Image image) {
         this.id = id;
         this.name = name;
-        this.size = size;
-        this.type = type;
         this.colour = colour;
         this.stock = stock;
         this.price = price;
         this.cost = cost;
-        this.promo = promo;
         this.image = image;
     }
 
-    public product(int id, String name) {
-        this.id = id;
-        this.name = name;
+    public Product(int id, String name, double price, int stock) {
+        this(id, name, price, stock, "", price, null);
+    }
+
+    public Product(){
+        this(-1, "",0,0,"",0, null);
     }
 
     @Override
     public String toString() {
-        return "product{" +
+        return "Product{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", size='" + size + '\'' +
-                ", type='" + type + '\'' +
                 ", colour='" + colour + '\'' +
                 ", stock=" + stock +
                 ", price=" + price +
                 ", cost=" + cost +
-                ", promo=" + promo +
                 ", image=" + image +
                 '}';
     }
