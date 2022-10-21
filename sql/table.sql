@@ -6,15 +6,45 @@ drop table if exists products;
 create table if not exists products(
 	id int primary key auto_increment,
     name varchar(20),
-	size varchar(20),
-	type varchar(20),
 	colour varchar(20),
-	stock int check(stock > 0),
-	price float check(price > 0),
-    cost float check(cost > 0),
-	promo float check(cost >= 0),
+	stock int check(stock >= 0),
+	price double check(price >= 0),
+    cost double check(cost >= 0),
+	sales double check(sales => 0 and sales <= 1),
 	image blob
-	);
+);
+
+drop table if exists clothes;
+create table if not exists clothes(
+	id int primary key,
+	size int check(size>=34 and size<=54),
+	sales double check(sales >= 0 and sales <= 1),
+	foreign key(id)
+	    references products(id)
+	    on delete cascade
+	    on update no action
+);
+
+drop table if exists shoes;
+create table if not exists shoes(
+	id int primary key,
+	size int check(size>=36 and size<=50),
+	sales double check(sales >= 0 and sales <= 1),
+	foreign key(id)
+	    references products(id)
+	    on delete cascade
+        on update no action
+);
+
+drop table if exists accessories;
+create table if not exists accessories(
+	id int primary key,
+	sales double check(sales >= 0 and sales <= 1),
+    foreign key(id)
+        references products(id)
+        on delete cascade
+        on update no action
+);
 
 drop table if exists orders;
 create table if not exists orders(
