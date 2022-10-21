@@ -17,7 +17,7 @@ create table if not exists products(
 drop table if exists clothes;
 create table if not exists clothes(
 	id int primary key,
-	size int check(size>=34 and size<=54),
+	size int check(size>=34 and size<=54 and size%2=0),
 	sales double check(sales >= 0 and sales <= 1),
 	foreign key(id)
 	    references products(id)
