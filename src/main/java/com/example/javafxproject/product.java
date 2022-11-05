@@ -1,130 +1,123 @@
 package com.example.javafxproject;
 
-import java.awt.*;
+import com.example.javafxproject.Discount;
 
-public class product {
-    private int id;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public abstract class product implements Discount, Comparable<product>{
+    private static AtomicInteger count = new AtomicInteger(1);
+    private static double income = 0;
+    private int number;
     private String name;
-    private String size;
-    private String type;
-    private String colour;
-    private int stock;
-    private float price;
-    private float cost;
-    private float promo;
-    private java.awt.Image image;
-
-    public int getId() {
-        return id;
+    private double price;
+    private int nbItems;
+    public product(String name, double price, int nbItems){
+        this.number = count.getAndIncrement();
+        this.name=name;
+        setPrice(price);
+        setNbItems(nbItems);
+    }
+    public String getName(){
+        return this.name;
+    }
+    public void setName(String name){
+        this.name=name;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public static double getIncome() {
+        return income;
     }
 
-    public String getName() {
-        return name;
+    public static void setIncome(double income) {
+        product.income = income;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public int getNumber() {
+        return number;
     }
 
-    public String getSize() {
-        return size;
+    public void setNumber(int number) {
+        this.number = number;
     }
 
-    public void setSize(String size) {
-        this.size = size;
-    }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getColour() {
-        return colour;
-    }
-
-    public void setColour(String colour) {
-        this.colour = colour;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
-        this.price = price;
+    public void setPrice(double price) {
+        try {
+            if(price>=0){
+                this.price = price;
+            }
+            else{
+                throw new IllegalArgumentException("Negative price");
+            }
+        }
+        catch(IllegalArgumentException e){
+            System.out.println(e);
+        }
+
     }
 
-    public float getCost() {
-        return cost;
+    public int getNbItems() {
+        return nbItems;
     }
 
-    public void setCost(float cost) {
-        this.cost = cost;
-    }
-
-    public float getPromo() {
-        return promo;
-    }
-
-    public void setPromo(float promo) {
-        this.promo = promo;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
-
-    public product(int id, String name, String size, String type, String colour, int stock, float price, float cost, float promo, Image image) {
-        this.id = id;
-        this.name = name;
-        this.size = size;
-        this.type = type;
-        this.colour = colour;
-        this.stock = stock;
-        this.price = price;
-        this.cost = cost;
-        this.promo = promo;
-        this.image = image;
-    }
-
-    public product(int id, String name) {
-        this.id = id;
-        this.name = name;
+    public void setNbItems(int nbItems) {
+        try {
+            if(nbItems>=0){
+                this.nbItems = nbItems;
+            }
+            else{
+                throw new IllegalArgumentException("Negative number");
+            }
+        }
+        catch(IllegalArgumentException e){
+            System.out.println(e);
+        }
     }
 
     @Override
     public String toString() {
-        return "product{" +
-                "id=" + id +
+        return "Product{" +
+                "number=" + number +
                 ", name='" + name + '\'' +
-                ", size='" + size + '\'' +
-                ", type='" + type + '\'' +
-                ", colour='" + colour + '\'' +
-                ", stock=" + stock +
                 ", price=" + price +
-                ", cost=" + cost +
-                ", promo=" + promo +
-                ", image=" + image +
+                ", nbItems=" + nbItems +
                 '}';
     }
+    public void sell(int nbItems){
+        try {
+            if(nbItems<=getNbItems()){
+                setIncome(getIncome()+(nbItems*getPrice()));
+                setNbItems(getNbItems()-nbItems);
+            }
+            else{
+                throw new IllegalArgumentException("Product unavailable");
+            }
+        }
+        catch(IllegalArgumentException e) {
+            System.out.println(e);
+        }
+    }
+    public void purchase(int nbItems){
+        setNbItems(getNbItems()+nbItems);
+    }
+    public void applyDiscount(){
+
+    }
+    @Override
+    public int compareTo(product p){
+        if(this.price<p.price){
+            return -1;
+        }
+        else if(this.price==p.price){
+            return 0;
+        }
+        else{
+            return 1;
+        }
+    }
 }
+

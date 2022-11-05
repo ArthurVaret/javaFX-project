@@ -10,11 +10,11 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="477.0" prefWidth="705.0" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafxproject.StoreController">
   <tabs>
     <Tab text="Dashboard">
       <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="900.0">
                <children>
                   <ListView fx:id="listViewOrder" layoutX="21.0" layoutY="24.0" prefHeight="406.0" prefWidth="200.0" />
                   <Label layoutX="279.0" layoutY="41.0" prefHeight="28.0" prefWidth="98.0" text="Global incomes" />
@@ -24,7 +24,7 @@
     </Tab>
     <Tab text="Products">
       <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="900.0">
                <children>
                   <ListView fx:id="listViewProducts" layoutX="14.0" layoutY="24.0" prefHeight="405.0" prefWidth="200.0" />
                   <Label layoutX="273.0" layoutY="42.0" prefHeight="27.0" prefWidth="46.0" text="Name" />
@@ -39,7 +39,7 @@
                   <ColorPicker fx:id="cpColour" layoutX="388.0" layoutY="124.0" />
                   <ImageView fx:id="imgImage" fitHeight="150.0" fitWidth="196.0" layoutX="363.0" layoutY="285.0" pickOnBounds="true" preserveRatio="true" />
                   <ComboBox fx:id="cbType" layoutX="384.0" layoutY="97.0" prefWidth="150.0" />
-                  <ComboBox fx:id="cbGender" layoutX="384.0" layoutY="70.0" prefWidth="150.0" />
+                  <ComboBox fx:id="cbSize" layoutX="384.0" layoutY="70.0" prefWidth="150.0" />
                   <TextField fx:id="txtName" layoutX="385.0" layoutY="43.0" />
                   <TextField fx:id="txtStock" layoutX="386.0" layoutY="151.0" />
                   <TextField fx:id="txtPrice" layoutX="386.0" layoutY="178.0" />
@@ -50,7 +50,7 @@
     </Tab>
       <Tab text="Order">
          <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="900.0" />
          </content>
       </Tab>
   </tabs>
