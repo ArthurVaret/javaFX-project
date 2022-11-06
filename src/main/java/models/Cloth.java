@@ -1,9 +1,9 @@
 package models;
 
-public class Clothe extends Product{
+public class Cloth extends Product{
     private int size;
 
-    public Clothe(int id, String name, double prize, int stock, int size){
+    public Cloth(int id, String name, double prize, int stock, int size){
         super(id, name, prize, stock);
         setSize(size);
     }
@@ -12,7 +12,7 @@ public class Clothe extends Product{
         return this.size;
     }
 
-    public String getType() { return "clothe"; }
+    public String getType() { return "cloth"; }
 
     public void setSize(int size) {
         try {

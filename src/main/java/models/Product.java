@@ -7,7 +7,6 @@ public abstract class Product implements Discount, Comparable<Product>{
     private static double income = 0;
     private int id;
     private int number;
-
     private String name;
     private double price;
     private int nbItems;
@@ -83,14 +82,11 @@ public abstract class Product implements Discount, Comparable<Product>{
         }
     }
 
+    public abstract String getType();
+
     @Override
     public String toString() {
-        return "Product{" +
-                "number=" + number +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", nbItems=" + nbItems +
-                '}';
+        return id + ". " + name;
     }
     public void sell(int nbItems){
         try {
@@ -112,12 +108,13 @@ public abstract class Product implements Discount, Comparable<Product>{
     public void applyDiscount(){
 
     }
+    public abstract int getSize();
     @Override
     public int compareTo(Product p){
-        if(this.price<p.price){
+        if (this.price < p.price){
             return -1;
         }
-        else if(this.price==p.price){
+        else if(this.price == p.price){
             return 0;
         }
         else{

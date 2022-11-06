@@ -6,5 +6,6 @@ public class Accessory extends Product{
         super(id, name, prize, stock);
     }
 
+    public int getSize(){return 0;}
     public String getType() { return "accessory"; }
 }
