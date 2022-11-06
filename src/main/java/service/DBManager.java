@@ -1,4 +1,4 @@
-package database;
+package service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,12 +8,12 @@ import models.Cloth;
 import models.Shoe;
 import models.Accessory;
 
-import static database.DBCredentials.DBMS;
-import static database.DBCredentials.HOST;
-import static database.DBCredentials.PORT;
-import static database.DBCredentials.DATABASE;
-import static database.DBCredentials.USERNAME;
-import static database.DBCredentials.PASSWORD;
+import static service.DBCredentials.DBMS;
+import static service.DBCredentials.HOST;
+import static service.DBCredentials.PORT;
+import static service.DBCredentials.DATABASE;
+import static service.DBCredentials.USERNAME;
+import static service.DBCredentials.PASSWORD;
 
 import java.sql.*;
 

@@ -11,12 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import models.Accessory;
 import models.Cloth;
 import models.Product;
 import models.Shoe;
 
-import database.DBManager;
+import service.DBManager;
 
 public class StoreController implements Initializable {
     @FXML

@@ -9,12 +9,12 @@ module com.example.javafxproject {
     requires java.desktop;
     requires java.sql;
 
-    opens com.example.javafxproject to javafx.fxml;
-    exports com.example.javafxproject;
+    opens app to javafx.fxml;
+    exports app;
     opens controllers to javafx.fxml;
     exports controllers;
-    opens database to javafx.fxml;
-    exports database;
+    opens service to javafx.fxml;
+    exports service;
     opens models to javafx.fxml;
     exports models;
 
