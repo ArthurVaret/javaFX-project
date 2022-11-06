@@ -6,7 +6,8 @@ in `src/main/java/service/` create a file named `DBCredentials.java` and add :
 package service;
 
 public final class DBCredentials {
-    public static final String DBMS = "mariadb";        // TO CHANGE
+    private DBCredentials() {}
+    public static final String DBMS = "mariadb";        // TO CHANGE, example : "mysql"
     public static final String HOST = "127.0.0.1";
     public static final String PORT = "3306";
     public static final String DATABASE = "wstore";     
