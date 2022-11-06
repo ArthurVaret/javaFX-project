@@ -14,10 +14,10 @@ public class Shoe extends Product{
 
     public String getType() { return "shoe"; }
 
-    public void setSize(int shoeSize) {
+    public void setSize(int size) {
         try {
-            if (shoeSize < 36 || shoeSize > 50) throw new IllegalArgumentException("Wrong shoe size !");
-            this.size = shoeSize;
+            if (size < 36 || size > 50) throw new IllegalArgumentException("Wrong shoe size !");
+            this.size = size;
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

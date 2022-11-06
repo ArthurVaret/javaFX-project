@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import models.Accessory;
+import models.Clothe;
+import models.Product;
+import models.Shoe;
+
 public class StoreController implements Initializable {
     @FXML
     private Label welcomeText;
@@ -57,18 +62,17 @@ public class StoreController implements Initializable {
         ObservableList<String> type = FXCollections.observableArrayList(tvalues);
         cbType.setItems(type);
 
-        List<product> hardProducts = new ArrayList<>();
-        hardProducts.add(new Shoes("AirForceOne",100,7,42));
-        hardProducts.add(new Clothes("t-shirt",32,13,3));
-        ObservableList<product> students=
-                FXCollections.observableArrayList(hardProducts);
+        List<Product> hardProducts = new ArrayList<>();
+        hardProducts.add(new Shoe(1, "AirForceOne",100,7,42));
+        hardProducts.add(new Clothe(2, "T-Shirt",32,13,3));
+        ObservableList<Product> students = FXCollections.observableArrayList(hardProducts);
         listViewProducts.setItems(students);
 
 
-        listViewProducts.getSelectionModel().selectedItemProperty().addListener(e->displayProductDetails((product) listViewProducts.getSelectionModel().getSelectedItem()));
+        listViewProducts.getSelectionModel().selectedItemProperty().addListener(e->displayProductDetails((Product) listViewProducts.getSelectionModel().getSelectedItem()));
 
     }
-    private void displayProductDetails(product selectedProduct) {
+    private void displayProductDetails(Product selectedProduct) {
         if(selectedProduct!=null){
             txtName.setText(selectedProduct.getName());
             txtStock.setText(String.valueOf(selectedProduct.getNbItems()));

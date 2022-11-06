@@ -1,22 +1,27 @@
-package com.example.javafxproject;
-
-import com.example.javafxproject.Discount;
+package models;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class product implements Discount, Comparable<product>{
+public abstract class Product implements Discount, Comparable<Product>{
     private static AtomicInteger count = new AtomicInteger(1);
     private static double income = 0;
+    private int id;
     private int number;
+
     private String name;
     private double price;
     private int nbItems;
-    public product(String name, double price, int nbItems){
+    protected Product(int id, String name, double price, int nbItems){
+        this.id = id;
         this.number = count.getAndIncrement();
         this.name=name;
         setPrice(price);
         setNbItems(nbItems);
     }
+    public int getId() { return id; }
+
+    public void setId(int id) { this.id = id; }
+
     public String getName(){
         return this.name;
     }
@@ -29,7 +34,7 @@ public abstract class product implements Discount, Comparable<product>{
     }
 
     public static void setIncome(double income) {
-        product.income = income;
+        Product.income = income;
     }
 
     public int getNumber() {
@@ -108,7 +113,7 @@ public abstract class product implements Discount, Comparable<product>{
 
     }
     @Override
-    public int compareTo(product p){
+    public int compareTo(Product p){
         if(this.price<p.price){
             return -1;
         }
