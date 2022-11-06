@@ -37,4 +37,5 @@ build/
 ### Mac OS ###
 .DS_Store
 
-src/main/java/database/DBCredentials.java
+DBCredentials
+DBCredentials.java
