@@ -16,6 +16,8 @@ import models.Cloth;
 import models.Product;
 import models.Shoe;
 
+import database.DBManager;
+
 public class StoreController implements Initializable {
     @FXML
     private Label welcomeText;
@@ -46,10 +48,12 @@ public class StoreController implements Initializable {
     private ArrayList<Integer> clothSizeList;
     private ObservableList<Integer> observableShoeSize;
     private ObservableList<Integer> observableClothSize;
+    private DBManager manager;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        manager = new DBManager();
         initializeSizeObservable();
 
         initializeSizeComboBox();
@@ -86,12 +90,16 @@ public class StoreController implements Initializable {
         cbType.setItems(type);
     }
     public void initializeProductListView() {
-        List<Product> products = new ArrayList<>();
-        products.add(new Shoe(1, "Air Force 1",100,7,42));
-        products.add(new Cloth(2, "T-Shirt",32,13,46));
-        products.add(new Accessory(3, "Rolex",3000,2));
-        ObservableList<Product> students = FXCollections.observableArrayList(products);
-        listViewProducts.setItems(students);
+//        List<Product> products = new ArrayList<>();
+//        products.add(new Shoe(1, "Air Force 1",100,7,42));
+//        products.add(new Cloth(2, "T-Shirt",32,13,46));
+//        products.add(new Accessory(3, "Rolex",3000,2));
+
+        List <Product> products = manager.loadProducts();
+        if (products != null) {
+            ObservableList<Product> students = FXCollections.observableArrayList(products);
+            listViewProducts.setItems(students);
+        }
     }
 
     private void displayProductDetails(Product selectedProduct) {
