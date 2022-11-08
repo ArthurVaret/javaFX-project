@@ -78,4 +78,28 @@ public class DBManager {
             System.out.println(e.getMessage());
         }
     }
+
+    public void addStudent(Product product){
+        Connection myConn=null;
+        PreparedStatement myStmt = null;
+        ResultSet myRs= null;
+        try {
+            myConn = this.Connector();
+            String sql = "insert into products(name,type,price,stock) values (\"?\", \"?\", ?, ?);";
+            myStmt = myConn.prepareStatement(sql);
+            myStmt.setString(1, product.getName());
+            myStmt.setString(2, product.getType());
+            myStmt.setString(3, String.valueOf(product.getPrice()));
+            myStmt.setString(4, String.valueOf(product.getNbItems()));
+            myStmt.execute();
+            System.out.println("Product added");
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        finally{
+            close(myConn,myStmt,myRs);
+        }
+    }
+
 }

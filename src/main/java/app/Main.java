@@ -13,7 +13,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/views/wstore.fxml"));
 
         Scene scene = new Scene(loader.load(), 900, 600);
-        stage.setTitle("Hello!");
+        stage.setTitle("WStore");
         stage.setScene(scene);
         stage.show();
     }

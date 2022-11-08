@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import models.Accessory;
 import models.Cloth;
 import models.Product;
 import models.Shoe;
@@ -163,5 +164,46 @@ public class StoreController implements Initializable {
         cpColour.setValue(null);
         btnCancel.setVisible(true);
         btnSave.setVisible(true);
+        btnDelete.setVisible(false);
+        btnModify.setVisible(false);
+    }
+    public void onCancel(){
+        listViewProducts.getSelectionModel().clearSelection();
+        txtName.setText(null);
+        txtStock.setText(null);
+        txtPrice.setText(null);
+        txtCost.setText(null);
+        txtPromo.setText(null);
+        cbType.setValue(null);
+        cbSize.setValue(null);
+        cpColour.setValue(null);
+        btnCancel.setVisible(false);
+        btnSave.setVisible(false);
+        btnDelete.setVisible(true);
+        btnModify.setVisible(true);
+    }
+    public void onSave(){
+        Product product = null;
+        switch (cbType.getValue()) {
+            case "cloth" -> {
+                product = new Cloth(1,txtName.getText(), Double.parseDouble(txtPrice.getText()),Integer.parseInt(txtStock.getText()), cbSize.getValue());
+            }
+            case "shoe" -> {
+                product = new Shoe(1,txtName.getText(),Double.parseDouble(txtPrice.getText()),Integer.parseInt(txtStock.getText()), cbSize.getValue());
+            }
+            case "accessory" -> {
+                product = new Accessory(1,txtName.getText(),Double.parseDouble(txtPrice.getText()),Integer.parseInt(txtStock.getText()));
+            }
+        }
+
+        ObservableList<Product> products = FXCollections.observableArrayList(listViewProducts.getItems());
+        products.add(product);
+        listViewProducts.setItems(products);
+    }
+    public void onModify(){
+
+    }
+    public void onDelete(){
+
     }
 }
