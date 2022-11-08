@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -52,32 +53,29 @@ public class StoreController implements Initializable {
     private Button btnSave;
     @FXML
     private Button btnCancel;
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
-    }
-
     private ArrayList<Integer> shoeSizeList;
     private ArrayList<Integer> clothSizeList;
+    private ArrayList<String> typeList;
     private ObservableList<Integer> observableShoeSize;
     private ObservableList<Integer> observableClothSize;
+    private ObservableList<String> observableType;
     private DBManager manager;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         manager = new DBManager();
-        initializeSizeObservable();
+        initializeObservable();
 
-        initializeSizeComboBox();
-        initializeTypeComboBox();
+        initializeComboBox();
         initializeProductListView();
         listViewProducts.getSelectionModel().selectedItemProperty().addListener(e->displayProductDetails((Product) listViewProducts.getSelectionModel().getSelectedItem()));
     }
 
-    public void initializeSizeObservable() {
-        shoeSizeList = new ArrayList<Integer>();
-        clothSizeList = new ArrayList<Integer>();
+    public void initializeObservable() {
+        shoeSizeList = new ArrayList<>();
+        clothSizeList = new ArrayList<>();
+        typeList = new ArrayList<>();
         // Tableau des tailles
         for (int i = 34; i <= 54; i+=2){
             shoeSizeList.add(i);
@@ -85,29 +83,22 @@ public class StoreController implements Initializable {
         for (int i = 36; i <= 50; i++){
             clothSizeList.add(i);
         }
+        // Les types
+        typeList.add("Cloth");
+        typeList.add("Shoe");
+        typeList.add("Accessory");
+
+        observableType = FXCollections.observableArrayList(typeList);
         observableShoeSize = FXCollections.observableArrayList(shoeSizeList);
         observableClothSize = FXCollections.observableArrayList(clothSizeList);
     }
 
-    public void initializeSizeComboBox() {
-        List<Integer> list = new ArrayList<Integer>();
-        ObservableList<Integer> size = FXCollections.observableArrayList(list);
-        cbSize.setItems(size);
+    public void initializeComboBox() {
+        cbSize.setItems(observableShoeSize);
+        cbType.setItems(observableType);
     }
-    public void initializeTypeComboBox(){
-        List<String> list = new ArrayList<String>();
-        list.add("Cloth");
-        list.add("Shoe");
-        list.add("Accessory");
-        ObservableList<String> type = FXCollections.observableArrayList(list);
-        cbType.setItems(type);
-    }
-    public void initializeProductListView() {
-//        List<Product> products = new ArrayList<>();
-//        products.add(new Shoe(1, "Air Force 1",100,7,42));
-//        products.add(new Cloth(2, "T-Shirt",32,13,46));
-//        products.add(new Accessory(3, "Rolex",3000,2));
 
+    public void initializeProductListView() {
         List <Product> products = manager.loadProducts();
         if (products != null) {
             ObservableList<Product> students = FXCollections.observableArrayList(products);
@@ -145,14 +136,13 @@ public class StoreController implements Initializable {
                 default -> {
                 }
             }
-        }
-        else {
+        } else {
             btnDelete.setVisible(false);
             btnModify.setVisible(false);
         }
     }
 
-    public void onNew() {
+    public void clearFields() {
         listViewProducts.getSelectionModel().clearSelection();
         txtName.setText(null);
         txtStock.setText(null);
@@ -162,39 +152,59 @@ public class StoreController implements Initializable {
         cbType.setValue(null);
         cbSize.setValue(null);
         cpColour.setValue(null);
+    }
+
+    public void onNew() {
+        clearFields();
         btnCancel.setVisible(true);
         btnSave.setVisible(true);
         btnDelete.setVisible(false);
         btnModify.setVisible(false);
     }
     public void onCancel(){
-        listViewProducts.getSelectionModel().clearSelection();
-        txtName.setText(null);
-        txtStock.setText(null);
-        txtPrice.setText(null);
-        txtCost.setText(null);
-        txtPromo.setText(null);
-        cbType.setValue(null);
-        cbSize.setValue(null);
-        cpColour.setValue(null);
+        clearFields();
         btnCancel.setVisible(false);
         btnSave.setVisible(false);
         btnDelete.setVisible(true);
         btnModify.setVisible(true);
     }
     public void onSave(){
+
+        if (cbType.getValue() == null ||
+            cbSize.getValue() == null ||
+            txtName.getText().isEmpty() ||
+            txtPrice.getText().isEmpty() ||
+            txtStock.getText().isEmpty()) {
+            txtError.setText("At least one field is not correct");
+            return;
+        }
+
+        String type = cbType.getValue();
+        String name = txtName.getText();
+        double price = Double.parseDouble(txtPrice.getText());
+        int stock = Integer.parseInt(txtStock.getText());
+        int size = cbSize.getValue();
+
         Product product = null;
-        switch (cbType.getValue()) {
+        int biggestId = -1;
+        // getting the biggest id
+        for (Product p:listViewProducts.getItems()) {
+            biggestId = Math.max(p.getId(),biggestId);
+        }
+
+        switch (type) {
             case "cloth" -> {
-                product = new Cloth(1,txtName.getText(), Double.parseDouble(txtPrice.getText()),Integer.parseInt(txtStock.getText()), cbSize.getValue());
+                product = new Cloth(biggestId+1,name,price,stock,size);
             }
             case "shoe" -> {
-                product = new Shoe(1,txtName.getText(),Double.parseDouble(txtPrice.getText()),Integer.parseInt(txtStock.getText()), cbSize.getValue());
+                product = new Shoe(biggestId+1,name,price,stock,size);
             }
             case "accessory" -> {
-                product = new Accessory(1,txtName.getText(),Double.parseDouble(txtPrice.getText()),Integer.parseInt(txtStock.getText()));
+                product = new Accessory(biggestId+1,name,price,stock);
             }
         }
+
+        txtError.setText(manager.addProduct(product));
 
         ObservableList<Product> products = FXCollections.observableArrayList(listViewProducts.getItems());
         products.add(product);

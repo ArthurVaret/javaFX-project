@@ -64,6 +64,7 @@ public class DBManager {
             return connection;
         }
         catch (Exception e) {
+            System.out.print("Couldn't create a DB connection.");
             e.printStackTrace();
             return null;
         }
@@ -79,26 +80,44 @@ public class DBManager {
         }
     }
 
-    public void addStudent(Product product){
+    public String addProduct(Product product){
         Connection myConn=null;
         PreparedStatement myStmt = null;
-        ResultSet myRs= null;
         try {
             myConn = this.Connector();
-            String sql = "insert into products(name,type,price,stock) values (\"?\", \"?\", ?, ?);";
+            String sql = "INSERT INTO products(name,type,price,stock) VALUES (\"?\", \"?\", ?, ?);";
             myStmt = myConn.prepareStatement(sql);
             myStmt.setString(1, product.getName());
             myStmt.setString(2, product.getType());
             myStmt.setString(3, String.valueOf(product.getPrice()));
             myStmt.setString(4, String.valueOf(product.getNbItems()));
-            myStmt.execute();
+            boolean res = myStmt.execute();
             System.out.println("Product added");
-        }
-        catch(Exception e){
+            return res ? "Successful" : "Something occurred";
+        } catch(Exception e) {
             System.out.println(e.getMessage());
+            return e.getMessage();
+        } finally {
+            close(myConn,myStmt,null);
         }
-        finally{
-            close(myConn,myStmt,myRs);
+    }
+
+    public String deleteProduct(Product product){
+        Connection myConn=null;
+        PreparedStatement myStmt = null;
+        try {
+            myConn = this.Connector();
+            String sql = "DELETE FROM products WHERE id=?;";
+            myStmt = myConn.prepareStatement(sql);
+            myStmt.setInt(1,product.getId());
+            boolean res = myStmt.execute();
+            System.out.println("Product deleted");
+            return res ? "Deleted " + product : "Something occurred";
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+            return e.getMessage();
+        } finally {
+            close(myConn,myStmt,null);
         }
     }
 
