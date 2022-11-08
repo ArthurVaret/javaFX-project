@@ -12,7 +12,7 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/views/wstore.fxml"));
 
-        Scene scene = new Scene(loader.load(), 320, 240);
+        Scene scene = new Scene(loader.load(), 900, 600);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();

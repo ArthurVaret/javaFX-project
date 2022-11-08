@@ -2,6 +2,7 @@ package controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -29,6 +30,8 @@ public class StoreController implements Initializable {
     @FXML
     private TextField txtCost;
     @FXML
+    private TextArea txtError;
+    @FXML
     private TextField txtPromo;
     @FXML
     private ComboBox<String> cbType;
@@ -38,6 +41,16 @@ public class StoreController implements Initializable {
     private ColorPicker cpColour;
     @FXML
     private ListView<Product> listViewProducts;
+    @FXML
+    private Button btnCreate;
+    @FXML
+    private Button btnModify;
+    @FXML
+    private Button btnDelete;
+    @FXML
+    private Button btnSave;
+    @FXML
+    private Button btnCancel;
     @FXML
     protected void onHelloButtonClick() {
         welcomeText.setText("Welcome to JavaFX Application!");
@@ -103,6 +116,8 @@ public class StoreController implements Initializable {
 
     private void displayProductDetails(Product selectedProduct) {
         if(selectedProduct != null){
+            btnDelete.setVisible(true);
+            btnModify.setVisible(true);
             txtName.setText(selectedProduct.getName());
             txtStock.setText(String.valueOf(selectedProduct.getNbItems()));
             txtPrice.setText(String.valueOf(selectedProduct.getPrice()));
@@ -130,6 +145,23 @@ public class StoreController implements Initializable {
                 }
             }
         }
+        else {
+            btnDelete.setVisible(false);
+            btnModify.setVisible(false);
+        }
     }
 
+    public void onNew() {
+        listViewProducts.getSelectionModel().clearSelection();
+        txtName.setText(null);
+        txtStock.setText(null);
+        txtPrice.setText(null);
+        txtCost.setText(null);
+        txtPromo.setText(null);
+        cbType.setValue(null);
+        cbSize.setValue(null);
+        cpColour.setValue(null);
+        btnCancel.setVisible(true);
+        btnSave.setVisible(true);
+    }
 }
