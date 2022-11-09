@@ -80,23 +80,40 @@ public class DBManager {
         }
     }
 
-    public String addProduct(Product product){
+    public Boolean addProduct(Product product){
         Connection myConn=null;
         PreparedStatement myStmt = null;
         try {
             myConn = this.Connector();
-            String sql = "INSERT INTO products(name,type,price,stock) VALUES (\"?\", \"?\", ?, ?);";
+
+
+            String type = product.getType();
+
+            String sql = "";
+
+            if (type.equals("accessory")){
+                sql = "INSERT INTO products(name,type,price,stock) VALUES (?, ?, ?, ?);";
+            }
+            else {
+                sql = "INSERT INTO products(name,type,price,stock,size) VALUES (?, ?, ?, ?, ?);";
+                myStmt.setInt(5,product.getSize());
+            }
             myStmt = myConn.prepareStatement(sql);
             myStmt.setString(1, product.getName());
-            myStmt.setString(2, product.getType());
-            myStmt.setString(3, String.valueOf(product.getPrice()));
-            myStmt.setString(4, String.valueOf(product.getNbItems()));
-            boolean res = myStmt.execute();
+            myStmt.setString(2, type);
+            myStmt.setDouble(3, product.getPrice());
+            myStmt.setInt(4, product.getNbItems());
+
+
+
+
+            ResultSet res = myStmt.executeQuery();
             System.out.println("Product added");
-            return res ? "Successful" : "Something occurred";
-        } catch(Exception e) {
+            return res.next();
+        } catch(SQLException e) {
             System.out.println(e.getMessage());
-            return e.getMessage();
+            e.printStackTrace();
+            return false;
         } finally {
             close(myConn,myStmt,null);
         }

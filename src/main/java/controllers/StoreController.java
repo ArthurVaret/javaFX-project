@@ -32,7 +32,7 @@ public class StoreController implements Initializable {
     @FXML
     private TextField txtCost;
     @FXML
-    private TextArea txtError;
+    private Label txtMessage;
     @FXML
     private TextField txtPromo;
     @FXML
@@ -144,14 +144,14 @@ public class StoreController implements Initializable {
 
     public void clearFields() {
         listViewProducts.getSelectionModel().clearSelection();
-        txtName.setText(null);
-        txtStock.setText(null);
-        txtPrice.setText(null);
-        txtCost.setText(null);
-        txtPromo.setText(null);
-        cbType.setValue(null);
-        cbSize.setValue(null);
-        cpColour.setValue(null);
+        txtName.setText("");
+        txtStock.setText("");
+        txtPrice.setText("");
+        txtCost.setText("");
+        txtPromo.setText("");
+        cbType.setValue("");
+        cbSize.setValue(0);
+        //cpColour.setValue();
     }
 
     public void onNew() {
@@ -175,7 +175,7 @@ public class StoreController implements Initializable {
             txtName.getText().isEmpty() ||
             txtPrice.getText().isEmpty() ||
             txtStock.getText().isEmpty()) {
-            txtError.setText("At least one field is not correct");
+            error("At least one field is not correct");
             return;
         }
 
@@ -191,29 +191,42 @@ public class StoreController implements Initializable {
         for (Product p:listViewProducts.getItems()) {
             biggestId = Math.max(p.getId(),biggestId);
         }
-
+        System.out.println(type);
         switch (type) {
-            case "cloth" -> {
+            case "Cloth" -> {
                 product = new Cloth(biggestId+1,name,price,stock,size);
             }
-            case "shoe" -> {
+            case "Shoe" -> {
                 product = new Shoe(biggestId+1,name,price,stock,size);
             }
-            case "accessory" -> {
+            case "Accessory" -> {
                 product = new Accessory(biggestId+1,name,price,stock);
             }
         }
+        if (manager.addProduct(product)){
+            message("Produit ajouté ! :)");
+            ObservableList<Product> products = FXCollections.observableArrayList(listViewProducts.getItems());
+            products.add(product);
+            listViewProducts.setItems(products);
+        }
 
-        txtError.setText(manager.addProduct(product));
+        else error("oh non, ça bug :(");
 
-        ObservableList<Product> products = FXCollections.observableArrayList(listViewProducts.getItems());
-        products.add(product);
-        listViewProducts.setItems(products);
+
     }
     public void onModify(){
 
     }
     public void onDelete(){
 
+    }
+
+    public void message(String m){
+        txtMessage.setText(m);
+        txtMessage.setStyle("-fx-text-fill: green;");
+    }
+    public void error(String m){
+        txtMessage.setText(m);
+        txtMessage.setStyle("-fx-text-fill: red;");
     }
 }
