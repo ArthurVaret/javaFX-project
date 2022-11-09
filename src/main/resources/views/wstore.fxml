@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.StoreController">
   <tabs>
@@ -25,31 +26,41 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="900.0">
                <children>
-                  <ListView fx:id="listViewProducts" layoutX="14.0" layoutY="24.0" prefHeight="405.0" prefWidth="200.0" />
-                  <Label layoutX="273.0" layoutY="25.0" prefHeight="27.0" prefWidth="46.0" text="Name" />
-                  <Label layoutX="273.0" layoutY="66.0" prefHeight="27.0" prefWidth="46.0" text="Size" />
-                  <Label layoutX="273.0" layoutY="115.0" prefHeight="27.0" prefWidth="46.0" text="Type" />
-                  <Label layoutX="273.0" layoutY="168.0" prefHeight="27.0" prefWidth="46.0" text="Stock" />
-                  <Label layoutX="273.0" layoutY="212.0" prefHeight="27.0" prefWidth="46.0" text="Price" />
-                  <Label layoutX="273.0" layoutY="259.0" prefHeight="27.0" prefWidth="46.0" text="Cost" />
-                  <Label layoutX="273.0" layoutY="308.0" prefHeight="27.0" prefWidth="46.0" text="Promo" />
-                  <ComboBox fx:id="cbType" layoutX="384.0" layoutY="116.0" prefWidth="150.0" />
-                  <ComboBox fx:id="cbSize" layoutX="384.0" layoutY="67.0" prefWidth="150.0" />
-                  <TextField fx:id="txtName" layoutX="385.0" layoutY="26.0" />
-                  <TextField fx:id="txtStock" layoutX="386.0" layoutY="169.0" />
-                  <TextField fx:id="txtPrice" layoutX="386.0" layoutY="213.0" />
-                  <TextField fx:id="txtCost" layoutX="386.0" layoutY="260.0" />
-                  <TextField fx:id="txtPromo" layoutX="386.0" layoutY="309.0" />
+                  <ListView fx:id="listViewProducts" layoutX="14.0" layoutY="44.0" prefHeight="405.0" prefWidth="200.0" />
+                  <Label layoutX="273.0" layoutY="45.0" prefHeight="27.0" prefWidth="46.0" text="Name" />
+                  <Label layoutX="273.0" layoutY="86.0" prefHeight="27.0" prefWidth="46.0" text="Size" />
+                  <Label layoutX="273.0" layoutY="135.0" prefHeight="27.0" prefWidth="46.0" text="Type" />
+                  <Label layoutX="273.0" layoutY="188.0" prefHeight="27.0" prefWidth="46.0" text="Stock" />
+                  <Label layoutX="273.0" layoutY="232.0" prefHeight="27.0" prefWidth="46.0" text="Price" />
+                  <Label layoutX="273.0" layoutY="279.0" prefHeight="27.0" prefWidth="46.0" text="Cost" />
+                  <Label layoutX="273.0" layoutY="328.0" prefHeight="27.0" prefWidth="46.0" text="Promo" />
+                  <ComboBox fx:id="cbType" layoutX="384.0" layoutY="136.0" prefWidth="150.0" />
+                  <ComboBox fx:id="cbSize" layoutX="384.0" layoutY="87.0" prefWidth="150.0" />
+                  <TextField fx:id="txtName" layoutX="385.0" layoutY="46.0" />
+                  <TextField fx:id="txtStock" layoutX="386.0" layoutY="189.0" />
+                  <TextField fx:id="txtPrice" layoutX="386.0" layoutY="233.0" />
+                  <TextField fx:id="txtCost" layoutX="386.0" layoutY="280.0" />
+                  <TextField fx:id="txtPromo" layoutX="386.0" layoutY="329.0" />
                   <Button fx:id="btnModify" layoutX="683.0" layoutY="155.0" mnemonicParsing="false" onAction="#onModify" prefHeight="26.0" prefWidth="78.0" text="Modify" visible="false" />
                   <Button fx:id="btnCreate" layoutX="683.0" layoutY="322.0" mnemonicParsing="false" onAction="#onNew" prefHeight="26.0" prefWidth="78.0" text="Create" />
                   <Button fx:id="btnDelete" layoutX="683.0" layoutY="225.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="Delete" visible="false" />
                   <Button fx:id="btnCancel" layoutX="683.0" layoutY="225.0" mnemonicParsing="false" onAction="#onCancel" prefHeight="26.0" prefWidth="78.0" text="Cancel" visible="false" />
                   <Button fx:id="btnSave" layoutX="683.0" layoutY="155.0" mnemonicParsing="false" onAction="#onSave" prefHeight="26.0" prefWidth="78.0" text="Save" visible="false" />
-                  <Label fx:id="txtMessage" layoutX="344.0" layoutY="425.0" prefHeight="102.0" prefWidth="522.0" />
+                  <Label fx:id="txtMessage" layoutX="328.0" layoutY="400.0" prefHeight="127.0" prefWidth="538.0" />
                   <Label layoutX="45.0" layoutY="464.0" prefHeight="27.0" prefWidth="69.0" text="Number of " />
                   <TextField fx:id="txtNumber" layoutX="123.0" layoutY="465.0" />
                   <Button fx:id="btnBuy" layoutX="65.0" layoutY="500.0" mnemonicParsing="false" onAction="#onNew" prefHeight="26.0" prefWidth="78.0" text="Buy" />
                   <Button fx:id="btnSell" layoutX="151.0" layoutY="500.0" mnemonicParsing="false" onAction="#onNew" prefHeight="26.0" prefWidth="78.0" text="Sell" />
+                  <Label layoutX="46.0" layoutY="11.0" prefHeight="27.0" prefWidth="116.0" text="List of products">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="326.0" layoutY="11.0" prefHeight="27.0" prefWidth="116.0" text="Details of product">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
                </children></AnchorPane>
       </content>
     </Tab>
