@@ -22,7 +22,7 @@ public class DBManager {
         Connection connection = this.Connector();
         try {
             Statement statement = connection.createStatement();
-            String query = "select * from products";
+            String query = "SELECT * FROM products";
             ResultSet res = statement.executeQuery(query);
             while (res.next()) {
                 String type =           res.getString("type");
@@ -34,15 +34,9 @@ public class DBManager {
 
                 Product product = null;
                 switch (type) {
-                    case "cloth" -> {
-                        product = new Cloth(productId,productName,productPrice,productStock, productSize);
-                    }
-                    case "shoe" -> {
-                        product = new Shoe(productId,productName,productPrice,productStock, productSize);
-                    }
-                    case "accessory" -> {
-                        product = new Accessory(productId,productName,productPrice,productStock);
-                    }
+                    case "Cloth" ->     product = new Cloth(productId,productName,productPrice,productStock, productSize);
+                    case "Shoe" ->      product = new Shoe(productId,productName,productPrice,productStock, productSize);
+                    case "Accessory" -> product = new Accessory(productId,productName,productPrice,productStock);
                 }
                 productList.add(product);
             }
@@ -55,12 +49,11 @@ public class DBManager {
     }
     public Connection Connector(){
         try {
-            Connection connection = DriverManager.getConnection(
+            return DriverManager.getConnection(
                     "jdbc:" + DBMS + "://" + HOST + ":" + PORT + "/" + DATABASE +"",
                     USERNAME,
                     PASSWORD
             );
-            return connection;
         }
         catch (Exception e) {
             System.out.print("Couldn't create a DB connection.");
@@ -85,22 +78,18 @@ public class DBManager {
         try {
             myConn = this.Connector();
             String type = product.getType();
-            String sql = "";
+            String sql;
 
-            if (type.equals("accessory")){
-                sql = "INSERT INTO products(name,type,price,stock) VALUES (?, ?, ?, ?);";
-            }
-            else {
-                sql = "INSERT INTO products(name,type,price,stock,size) VALUES (?, ?, ?, ?, ?);";
+            if (type.equals("Accessory"))   sql = "INSERT INTO products(name,type,price,stock) VALUES (?, ?, ?, ?);";
+            else                            sql = "INSERT INTO products(name,type,price,stock,size) VALUES (?, ?, ?, ?, ?);";
 
-            }
             myStmt = myConn.prepareStatement(sql);
             myStmt.setString(1, product.getName());
             myStmt.setString(2, type);
             myStmt.setDouble(3, product.getPrice());
             myStmt.setInt(4, product.getStock());
 
-            if (type != "accessory") myStmt.setInt(5,product.getSize());
+            if (!type.equals("Accessory")) myStmt.setInt(5,product.getSize());
 
             int res = myStmt.executeUpdate();
             System.out.println("Product added");

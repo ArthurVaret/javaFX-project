@@ -12,7 +12,7 @@ public class Cloth extends Product{
         return this.size;
     }
 
-    public String getType() { return "cloth"; }
+    public String getType() { return "Cloth"; }
 
     public void setSize(int size) {
         try {

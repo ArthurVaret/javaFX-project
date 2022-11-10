@@ -10,10 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import models.Accessory;
-import models.Cloth;
-import models.Product;
-import models.Shoe;
+import models.*;
 
 import service.DBManager;
 
@@ -29,6 +26,8 @@ public class StoreController implements Initializable {
     @FXML
     private TextField txtCost;
     @FXML
+    public TextField txtNumber;
+    @FXML
     private Label txtMessage;
     @FXML
     private TextField txtPromo;
@@ -37,9 +36,9 @@ public class StoreController implements Initializable {
     @FXML
     private ComboBox<Integer> cbSize;
     @FXML
-    private ColorPicker cpColour;
-    @FXML
     private ListView<Product> listViewProducts;
+    @FXML
+    public ListView<Order> listViewOrder;
     @FXML
     private Button btnCreate;
     @FXML
@@ -50,9 +49,12 @@ public class StoreController implements Initializable {
     private Button btnSave;
     @FXML
     private Button btnCancel;
+    @FXML
+    public Button btnSell;
+    @FXML
+    public Button btnBuy;
     private ArrayList<Integer> shoeSizeList;
     private ArrayList<Integer> clothSizeList;
-    private ArrayList<String> typeList;
     private ArrayList<Product> productList;
     private ObservableList<Integer> observableShoeSize;
     private ObservableList<Integer> observableClothSize;
@@ -69,14 +71,14 @@ public class StoreController implements Initializable {
 
         initializeComboBox();
         initializeProductListView();
-        listViewProducts.getSelectionModel().selectedItemProperty().addListener(e->displayProductDetails((Product) listViewProducts.getSelectionModel().getSelectedItem()));
+        listViewProducts.getSelectionModel().selectedItemProperty().addListener(e->displayProductDetails(listViewProducts.getSelectionModel().getSelectedItem()));
         cbType.getSelectionModel().selectedItemProperty().addListener(e->displaySizesIfNotAccessory(cbType.getSelectionModel().getSelectedItem()));
     }
 
     public void initializeObservable() {
         shoeSizeList = new ArrayList<>();
         clothSizeList = new ArrayList<>();
-        typeList = new ArrayList<>();
+        ArrayList<String> typeList = new ArrayList<>();
         // Tableau des tailles
         for (int i = 34; i <= 54; i+=2){
             shoeSizeList.add(i);
@@ -123,7 +125,7 @@ public class StoreController implements Initializable {
             txtCost.setText(String.valueOf(selected.getPrice()));
 
             switch (selected.getType()) {
-                case "cloth" -> {
+                case "Cloth" -> {
                     Cloth cloth = (Cloth) selected;
                     cbSize.setItems(observableClothSize);
                     cbSize.setValue(cloth.getSize());
@@ -137,7 +139,7 @@ public class StoreController implements Initializable {
                     showSizeCb();
                     cbType.setValue("Shoe");
                 }
-                case "accessory" -> {
+                case "Accessory" -> {
                     hideSizeCb();
                     cbSize.setValue(null);
                     cbType.setValue("Accessory");
@@ -221,7 +223,7 @@ public class StoreController implements Initializable {
         listViewProducts.setItems(observableProduct);
     }
 
-    private boolean isInputsValid() {
+    private boolean isInputsInvalid() {
         if (cbType.getValue() == null || cbType.getValue().isEmpty()) return false;
         if (cbSize.getValue() == null) return false;
 
@@ -250,7 +252,7 @@ public class StoreController implements Initializable {
     }
     public void onSave(){
         // check inputs
-        if (!isInputsValid()) {
+        if (isInputsInvalid()) {
             error("Please enter correct fields");
             return;
         }
@@ -271,15 +273,9 @@ public class StoreController implements Initializable {
         }
 
         switch (type) {
-            case "Cloth" -> {
-                product = new Cloth(biggestId+1,name,price,stock,size);
-            }
-            case "Shoe" -> {
-                product = new Shoe(biggestId+1,name,price,stock,size);
-            }
-            case "Accessory" -> {
-                product = new Accessory(biggestId+1,name,price,stock);
-            }
+            case "Cloth" ->     product = new Cloth(biggestId+1,name,price,stock,size);
+            case "Shoe" ->      product = new Shoe(biggestId+1,name,price,stock,size);
+            case "Accessory" -> product = new Accessory(biggestId+1,name,price,stock);
         }
 
         if (product == null) {
@@ -297,7 +293,7 @@ public class StoreController implements Initializable {
     public void onModify(){
         if (selected != null) {
             // check for fields
-            if (!isInputsValid()) {
+            if (!isInputsInvalid()) {
                 error("Please enter correct fields");
                 return;
             }
@@ -311,15 +307,9 @@ public class StoreController implements Initializable {
             Product product = null;
 
             switch (type) {
-                case "Cloth" -> {
-                    product = new Cloth(selected.getId(),name,price,stock,size);
-                }
-                case "Shoe" -> {
-                    product = new Shoe(selected.getId(),name,price,stock,size);
-                }
-                case "Accessory" -> {
-                    product = new Accessory(selected.getId(),name,price,stock);
-                }
+                case "Cloth" ->     product = new Cloth(selected.getId(),name,price,stock,size);
+                case "Shoe" ->      product = new Shoe(selected.getId(),name,price,stock,size);
+                case "Accessory" -> product = new Accessory(selected.getId(),name,price,stock);
             }
 
             if (product == null) {
@@ -342,7 +332,6 @@ public class StoreController implements Initializable {
             } else error("Oh no, there is a bug :(");
         } else error("No product selected");
     }
-
     public void onDelete(){
 //        System.out.println(listViewProducts.getSelectionModel().getSelectedItem().getId());
         if (selected != null) {
@@ -354,15 +343,12 @@ public class StoreController implements Initializable {
             else error("Oh no, there is a bug :(");
         }
     }
-
     public void onBuy(){
 
     }
-
     public void onSell(){
 
     }
-
     private void message(String m){
         txtMessage.setText(m);
         txtMessage.setStyle("-fx-text-fill: green;");

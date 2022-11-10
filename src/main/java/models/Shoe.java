@@ -12,7 +12,7 @@ public class Shoe extends Product{
         return this.size;
     }
 
-    public String getType() { return "shoe"; }
+    public String getType() { return "Shoe"; }
 
     public void setSize(int size) {
         try {

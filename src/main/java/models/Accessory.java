@@ -7,5 +7,5 @@ public class Accessory extends Product{
     }
 
     public int getSize(){return 0;}
-    public String getType() { return "accessory"; }
+    public String getType() { return "Accessory"; }
 }
