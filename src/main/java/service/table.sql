@@ -13,8 +13,7 @@ create table if not exists products(
     cost double default 0 check(cost >= 0),
     size int default 0,
     saleFactor double default 1 check(saleFactor >= 0 and saleFactor <=1),
-    isOnSale bool default false,
-	image blob default null
+    isOnSale bool default false
 );
 
 drop table if exists orders;

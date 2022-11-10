@@ -1,7 +1,6 @@
 package service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import models.Product;
 import models.Cloth;
@@ -18,8 +17,8 @@ import static service.DBCredentials.PASSWORD;
 import java.sql.*;
 
 public class DBManager {
-    public List<Product> loadProducts() {
-        List<Product> productList = new ArrayList<>();
+    public ArrayList<Product> loadProducts() {
+        ArrayList<Product> productList = new ArrayList<>();
         Connection connection = this.Connector();
         try {
             Statement statement = connection.createStatement();
@@ -80,15 +79,12 @@ public class DBManager {
         }
     }
 
-    public Boolean addProduct(Product product){
+    public boolean addProduct(Product product){
         Connection myConn=null;
         PreparedStatement myStmt = null;
         try {
             myConn = this.Connector();
-
-
             String type = product.getType();
-
             String sql = "";
 
             if (type.equals("accessory")){
@@ -102,14 +98,13 @@ public class DBManager {
             myStmt.setString(1, product.getName());
             myStmt.setString(2, type);
             myStmt.setDouble(3, product.getPrice());
-            myStmt.setInt(4, product.getNbItems());
+            myStmt.setInt(4, product.getStock());
 
             if (type != "accessory") myStmt.setInt(5,product.getSize());
 
-
-
             int res = myStmt.executeUpdate();
             System.out.println("Product added");
+            System.out.println(myStmt);
             return res == 1;
         } catch(SQLException e) {
             System.out.println(e.getMessage());
@@ -120,7 +115,7 @@ public class DBManager {
         }
     }
 
-    public Boolean deleteProduct(int id){
+    public boolean deleteProduct(int id){
         Connection myConn=null;
         PreparedStatement myStmt = null;
         try {
@@ -130,12 +125,40 @@ public class DBManager {
             myStmt.setInt(1,id);
             int res = myStmt.executeUpdate();
             System.out.println("Product deleted");
-            return res==1;
-        } catch(Exception e) {
+            System.out.println(myStmt);
+            return res == 1;
+        } catch(SQLException e) {
             System.out.println(e.getMessage());
             return false;
         } finally {
             close(myConn,myStmt,null);
+        }
+    }
+
+    public boolean updateProduct(Product product) {
+        Connection c = null;
+        PreparedStatement s = null;
+        try {
+            c = this.Connector();
+            String sql = "UPDATE products SET name = ?, type = ?, size = ?, price = ?, stock = ? WHERE id = ? ";
+            s = c.prepareStatement(sql);
+            s.setString(1, product.getName());
+            s.setString(2, product.getType());
+            s.setInt(3,product.getSize());
+            s.setDouble(4,product.getPrice());
+            s.setInt(5,product.getStock());       // stock
+
+            s.setInt(6,product.getId());            // id
+
+            int res = s.executeUpdate();
+            System.out.println("Product updated");
+            System.out.println(s);
+            return res == 1;
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+            return false;
+        } finally {
+            close(c,s,null);
         }
     }
 

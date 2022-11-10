@@ -9,13 +9,13 @@ public abstract class Product implements Discount, Comparable<Product>{
     private int number;
     private String name;
     private double price;
-    private int nbItems;
-    protected Product(int id, String name, double price, int nbItems){
+    private int stock;
+    protected Product(int id, String name, double price, int stock){
         this.id = id;
         this.number = count.getAndIncrement();
         this.name=name;
         setPrice(price);
-        setNbItems(nbItems);
+        setStock(stock);
     }
     public int getId() { return id; }
 
@@ -64,14 +64,14 @@ public abstract class Product implements Discount, Comparable<Product>{
 
     }
 
-    public int getNbItems() {
-        return nbItems;
+    public int getStock() {
+        return stock;
     }
 
-    public void setNbItems(int nbItems) {
+    public void setStock(int stock) {
         try {
-            if(nbItems>=0){
-                this.nbItems = nbItems;
+            if(stock >=0){
+                this.stock = stock;
             }
             else{
                 throw new IllegalArgumentException("Negative number");
@@ -83,16 +83,16 @@ public abstract class Product implements Discount, Comparable<Product>{
     }
 
     public abstract String getType();
-
+    public abstract int getSize();
     @Override
     public String toString() {
         return id + ". " + name;
     }
     public void sell(int nbItems){
         try {
-            if(nbItems<=getNbItems()){
+            if(nbItems<= getStock()){
                 setIncome(getIncome()+(nbItems*getPrice()));
-                setNbItems(getNbItems()-nbItems);
+                setStock(getStock()-nbItems);
             }
             else{
                 throw new IllegalArgumentException("Product unavailable");
@@ -103,23 +103,28 @@ public abstract class Product implements Discount, Comparable<Product>{
         }
     }
     public void purchase(int nbItems){
-        setNbItems(getNbItems()+nbItems);
+        setStock(getStock()+nbItems);
     }
     public void applyDiscount(){
 
     }
-    public abstract int getSize();
+
     @Override
     public int compareTo(Product p){
-        if (this.price < p.price){
-            return -1;
-        }
-        else if(this.price == p.price){
-            return 0;
-        }
-        else{
-            return 1;
-        }
+        return Double.compare(this.price, p.price);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (o == this)                      return true;
+        if (!(o instanceof Product p))      return false;
+        return  p.getId() == this.id &&
+                p.getName().equals(this.name) &&
+                p.getType().equals(this.getType()) &&
+                p.getPrice() == this.price &&
+                p.getStock() == this.stock &&
+                p.getSize() == this.getSize()
+                ;
     }
 }
 

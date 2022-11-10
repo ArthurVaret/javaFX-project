@@ -3,7 +3,6 @@ module com.example.javafxproject {
     requires javafx.fxml;
 
     requires org.controlsfx.controls;
-    //requires validatorfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires java.desktop;

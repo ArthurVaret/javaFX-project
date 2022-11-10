@@ -28,7 +28,7 @@
                <children>
                   <ListView fx:id="listViewProducts" layoutX="14.0" layoutY="44.0" prefHeight="405.0" prefWidth="200.0" />
                   <Label layoutX="273.0" layoutY="45.0" prefHeight="27.0" prefWidth="46.0" text="Name" />
-                  <Label layoutX="273.0" layoutY="86.0" prefHeight="27.0" prefWidth="46.0" text="Size" />
+                  <Label fx:id="lblSize" layoutX="273.0" layoutY="86.0" prefHeight="27.0" prefWidth="46.0" text="Size" />
                   <Label layoutX="273.0" layoutY="135.0" prefHeight="27.0" prefWidth="46.0" text="Type" />
                   <Label layoutX="273.0" layoutY="188.0" prefHeight="27.0" prefWidth="46.0" text="Stock" />
                   <Label layoutX="273.0" layoutY="232.0" prefHeight="27.0" prefWidth="46.0" text="Price" />

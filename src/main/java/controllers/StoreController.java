@@ -2,15 +2,12 @@ package controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.net.URL;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import models.Accessory;
@@ -22,7 +19,7 @@ import service.DBManager;
 
 public class StoreController implements Initializable {
     @FXML
-    private Label welcomeText;
+    private Label lblSize;
     @FXML
     private TextField txtName;
     @FXML
@@ -56,10 +53,13 @@ public class StoreController implements Initializable {
     private ArrayList<Integer> shoeSizeList;
     private ArrayList<Integer> clothSizeList;
     private ArrayList<String> typeList;
+    private ArrayList<Product> productList;
     private ObservableList<Integer> observableShoeSize;
     private ObservableList<Integer> observableClothSize;
     private ObservableList<String> observableType;
+    private ObservableList<Product> observableProduct;
     private DBManager manager;
+    private Product selected;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -70,6 +70,7 @@ public class StoreController implements Initializable {
         initializeComboBox();
         initializeProductListView();
         listViewProducts.getSelectionModel().selectedItemProperty().addListener(e->displayProductDetails((Product) listViewProducts.getSelectionModel().getSelectedItem()));
+        cbType.getSelectionModel().selectedItemProperty().addListener(e->displaySizesIfNotAccessory(cbType.getSelectionModel().getSelectedItem()));
     }
 
     public void initializeObservable() {
@@ -92,44 +93,52 @@ public class StoreController implements Initializable {
         observableShoeSize = FXCollections.observableArrayList(shoeSizeList);
         observableClothSize = FXCollections.observableArrayList(clothSizeList);
     }
-
     public void initializeComboBox() {
         cbSize.setItems(observableShoeSize);
         cbType.setItems(observableType);
-    }
 
+        cbSize.setPromptText("Choose a size");
+        cbType.setPromptText("Choose a type");
+    }
     public void initializeProductListView() {
-        List <Product> products = manager.loadProducts();
-        if (products != null) {
-            ObservableList<Product> students = FXCollections.observableArrayList(products);
-            listViewProducts.setItems(students);
+        productList = manager.loadProducts();
+        if (productList != null) {
+            observableProduct = FXCollections.observableArrayList(productList);
+            listViewProducts.setItems(observableProduct);
         }
     }
 
     private void displayProductDetails(Product selectedProduct) {
         if(selectedProduct != null){
-            btnDelete.setVisible(true);
-            btnModify.setVisible(true);
-            txtName.setText(selectedProduct.getName());
-            txtStock.setText(String.valueOf(selectedProduct.getNbItems()));
-            txtPrice.setText(String.valueOf(selectedProduct.getPrice()));
-            txtCost.setText(String.valueOf(selectedProduct.getPrice()));
+            selected = selectedProduct;
 
-            switch (selectedProduct.getType()) {
+            // showing buttons
+            if (!btnDelete.isVisible()) btnDelete.setVisible(true);
+            if (!btnModify.isVisible()) btnModify.setVisible(true);
+
+            // Filling fields
+            txtName.setText(selected.getName());
+            txtStock.setText(String.valueOf(selected.getStock()));
+            txtPrice.setText(String.valueOf(selected.getPrice()));
+            txtCost.setText(String.valueOf(selected.getPrice()));
+
+            switch (selected.getType()) {
                 case "cloth" -> {
-                    Cloth cloth = (Cloth) selectedProduct;
+                    Cloth cloth = (Cloth) selected;
                     cbSize.setItems(observableClothSize);
                     cbSize.setValue(cloth.getSize());
+                    showSizeCb();
                     cbType.setValue("Cloth");
                 }
                 case "shoe" -> {
-                    Shoe shoe = (Shoe) selectedProduct;
+                    Shoe shoe = (Shoe) selected;
                     cbSize.setItems(observableShoeSize);
                     cbSize.setValue(shoe.getSize());
+                    showSizeCb();
                     cbType.setValue("Shoe");
                 }
                 case "accessory" -> {
-                    cbSize.hide();
+                    hideSizeCb();
                     cbSize.setValue(null);
                     cbType.setValue("Accessory");
                 }
@@ -137,12 +146,26 @@ public class StoreController implements Initializable {
                 }
             }
         } else {
-            btnDelete.setVisible(false);
-            btnModify.setVisible(false);
+            if (btnDelete.isVisible()) btnDelete.setVisible(false);
+            if (btnModify.isVisible()) btnModify.setVisible(false);
         }
     }
+    private void displaySizesIfNotAccessory(String selectedType) {
+        if (!selectedType.isEmpty()) {
+            if (selectedType.equals("Accessory")) hideSizeCb();
+            else showSizeCb();
+        }
+    }
+    private void showSizeCb() {
+        if (!lblSize.isVisible()) lblSize.setVisible(true);
+        if (!cbSize.isVisible()) cbSize.setVisible(true);
+    }
+    private void hideSizeCb() {
+        if (lblSize.isVisible()) lblSize.setVisible(false);
+        if (cbSize.isVisible()) cbSize.setVisible(false);
+    }
 
-    public void clearFields() {
+    private void clearFields() {
         listViewProducts.getSelectionModel().clearSelection();
         txtName.setText("");
         txtStock.setText("");
@@ -151,34 +174,88 @@ public class StoreController implements Initializable {
         txtPromo.setText("");
         cbType.setValue("");
         cbSize.setValue(0);
-        //cpColour.setValue();
+        cbSize.setPromptText("Choose a size");
+        cbType.setPromptText("Choose a type");
+    }
+    private void disableProductList() {
+        if (!listViewProducts.isMouseTransparent()) listViewProducts.setMouseTransparent(true);
+        if (listViewProducts.isFocusTraversable()) listViewProducts.setFocusTraversable(false);
+    }
+    private void enableProductList() {
+        if (listViewProducts.isMouseTransparent()) listViewProducts.setMouseTransparent(false);
+        if (!listViewProducts.isFocusTraversable()) listViewProducts.setFocusTraversable(true);
+    }
+
+    private void createMode(){
+        disableProductList();
+        if (!btnCancel.isVisible()) btnCancel.setVisible(true);
+        if (!btnSave.isVisible())   btnSave.setVisible(true);
+        if (btnCreate.isVisible())  btnCreate.setVisible(false);
+        if (btnDelete.isVisible())  btnDelete.setVisible(false);
+        if (btnModify.isVisible())  btnModify.setVisible(false);
+    }
+
+    private void normalMode(){
+        enableProductList();
+        if (btnCancel.isVisible())  btnCancel.setVisible(false);
+        if (btnSave.isVisible())    btnSave.setVisible(false);
+        if (!btnCreate.isVisible()) btnCreate.setVisible(true);
+        if (!btnDelete.isVisible()) btnDelete.setVisible(true);
+        if (!btnModify.isVisible()) btnModify.setVisible(true);
+    }
+
+    private void addProductInList(Product p) {
+        productList.add(p);
+        observableProduct.add(p);
+        listViewProducts.setItems(observableProduct);
+    }
+    private void deleteProductInList(Product p) {
+        productList.remove(p);
+        observableProduct.remove(p);
+        listViewProducts.setItems(observableProduct); // refresh listView
+    }
+
+    private void updateProductInList(int i, Product p){
+        productList.set(i, p);
+        observableProduct.set(i, p);
+        listViewProducts.setItems(observableProduct);
+    }
+
+    private boolean isInputsValid() {
+        if (cbType.getValue() == null || cbType.getValue().isEmpty()) return false;
+        if (cbSize.getValue() == null) return false;
+
+        // check for size depending on product's type
+        boolean sizeValid = true;
+        int size = cbSize.getValue();
+        String selectedType = cbType.getValue();
+        if (selectedType.equals("Shoe")) sizeValid = shoeSizeList.contains(size);
+        if (selectedType.equals("Accessory")) sizeValid = clothSizeList.contains(size);
+
+        return
+            sizeValid &&
+            !txtName.getText().isEmpty() &&
+            !txtPrice.getText().isEmpty() &&
+            !txtStock.getText().isEmpty()
+            ;
     }
 
     public void onNew() {
         clearFields();
-        btnCancel.setVisible(true);
-        btnSave.setVisible(true);
-        btnDelete.setVisible(false);
-        btnModify.setVisible(false);
+        createMode();
     }
     public void onCancel(){
         clearFields();
-        btnCancel.setVisible(false);
-        btnSave.setVisible(false);
-        btnDelete.setVisible(true);
-        btnModify.setVisible(true);
+        normalMode();
     }
     public void onSave(){
-
-        if (cbType.getValue() == null ||
-            cbSize.getValue() == null ||
-            txtName.getText().isEmpty() ||
-            txtPrice.getText().isEmpty() ||
-            txtStock.getText().isEmpty()) {
-            error("At least one field is not correct");
+        // check inputs
+        if (!isInputsValid()) {
+            error("Please enter correct fields");
             return;
         }
 
+        // storing inputs
         String type = cbType.getValue();
         String name = txtName.getText();
         double price = Double.parseDouble(txtPrice.getText());
@@ -186,12 +263,13 @@ public class StoreController implements Initializable {
         int size = cbSize.getValue();
 
         Product product = null;
-        int biggestId = -1;
+
         // getting the biggest id
+        int biggestId = -1;
         for (Product p:listViewProducts.getItems()) {
             biggestId = Math.max(p.getId(),biggestId);
         }
-        System.out.println(type);
+
         switch (type) {
             case "Cloth" -> {
                 product = new Cloth(biggestId+1,name,price,stock,size);
@@ -203,43 +281,93 @@ public class StoreController implements Initializable {
                 product = new Accessory(biggestId+1,name,price,stock);
             }
         }
-        if (manager.addProduct(product)){
-            message("Produit ajouté ! :)");
-            ObservableList<Product> products = FXCollections.observableArrayList(listViewProducts.getItems());
-            products.add(product);
-            listViewProducts.setItems(products);
+
+        if (product == null) {
+            error("Couldn't understand the described product, please check");
+            return;
         }
 
-        else error("oh non, ça bug :(");
-
-
+        if (manager.addProduct(product)){
+//            addProductInList(product); // refresh listView
+            message("Product added ! :)");
+            onCancel();
+            initializeProductListView();
+        } else error("Oh no, there is a bug :(");
     }
     public void onModify(){
+        if (selected != null) {
+            // check for fields
+            if (!isInputsValid()) {
+                error("Please enter correct fields");
+                return;
+            }
+            // check if we changed any property
+            String type = cbType.getValue();
+            String name = txtName.getText();
+            double price = Double.parseDouble(txtPrice.getText());
+            int stock = Integer.parseInt(txtStock.getText());
+            int size = cbSize.getValue();
 
+            Product product = null;
+
+            switch (type) {
+                case "Cloth" -> {
+                    product = new Cloth(selected.getId(),name,price,stock,size);
+                }
+                case "Shoe" -> {
+                    product = new Shoe(selected.getId(),name,price,stock,size);
+                }
+                case "Accessory" -> {
+                    product = new Accessory(selected.getId(),name,price,stock);
+                }
+            }
+
+            if (product == null) {
+                error("Couldn't understand the described product, please check");
+                return;
+            }
+
+            int index = productList.indexOf(selected);
+            if (index == -1 && selected == productList.get(index)) {
+                System.out.println("Index : " + index);
+                error("Change a property if you want to update !");
+                return;
+            }
+
+            if (manager.updateProduct(product)) {
+//                updateProductInList(index, product);
+                normalMode();
+                message("Product updated !");
+                initializeProductListView();
+            } else error("Oh no, there is a bug :(");
+        } else error("No product selected");
     }
+
     public void onDelete(){
-        System.out.println(listViewProducts.getSelectionModel().getSelectedItem().getId());
-        if (manager.deleteProduct(listViewProducts.getSelectionModel().getSelectedItem().getId())){
-            message("Produit supprimé !");
-            ObservableList<Product> products = FXCollections.observableArrayList(listViewProducts.getItems());
-            products.remove(listViewProducts.getSelectionModel().getSelectedItem());
-            listViewProducts.setItems(products);
+//        System.out.println(listViewProducts.getSelectionModel().getSelectedItem().getId());
+        if (selected != null) {
+            int id = selected.getId();
+            if (manager.deleteProduct(id)){
+                message("Product deleted !");
+                deleteProductInList(selected);
+            }
+            else error("Oh no, there is a bug :(");
         }
-        else error("oh non, ça bug :(");
     }
 
     public void onBuy(){
 
     }
+
     public void onSell(){
 
     }
 
-    public void message(String m){
+    private void message(String m){
         txtMessage.setText(m);
         txtMessage.setStyle("-fx-text-fill: green;");
     }
-    public void error(String m){
+    private void error(String m){
         txtMessage.setText(m);
         txtMessage.setStyle("-fx-text-fill: red;");
     }
