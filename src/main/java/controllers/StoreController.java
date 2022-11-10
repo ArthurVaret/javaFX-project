@@ -218,6 +218,20 @@ public class StoreController implements Initializable {
 
     }
     public void onDelete(){
+        System.out.println(listViewProducts.getSelectionModel().getSelectedItem().getId());
+        if (manager.deleteProduct(listViewProducts.getSelectionModel().getSelectedItem().getId())){
+            message("Produit supprimé !");
+            ObservableList<Product> products = FXCollections.observableArrayList(listViewProducts.getItems());
+            products.remove(listViewProducts.getSelectionModel().getSelectedItem());
+            listViewProducts.setItems(products);
+        }
+        else error("oh non, ça bug :(");
+    }
+
+    public void onBuy(){
+
+    }
+    public void onSell(){
 
     }
 

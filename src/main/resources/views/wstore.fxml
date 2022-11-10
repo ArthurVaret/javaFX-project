@@ -43,14 +43,14 @@
                   <TextField fx:id="txtPromo" layoutX="386.0" layoutY="329.0" />
                   <Button fx:id="btnModify" layoutX="683.0" layoutY="155.0" mnemonicParsing="false" onAction="#onModify" prefHeight="26.0" prefWidth="78.0" text="Modify" visible="false" />
                   <Button fx:id="btnCreate" layoutX="683.0" layoutY="322.0" mnemonicParsing="false" onAction="#onNew" prefHeight="26.0" prefWidth="78.0" text="Create" />
-                  <Button fx:id="btnDelete" layoutX="683.0" layoutY="225.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="Delete" visible="false" />
+                  <Button fx:id="btnDelete" layoutX="683.0" layoutY="225.0" mnemonicParsing="false" onAction="#onDelete" prefHeight="26.0" prefWidth="78.0" text="Delete" visible="false" />
                   <Button fx:id="btnCancel" layoutX="683.0" layoutY="225.0" mnemonicParsing="false" onAction="#onCancel" prefHeight="26.0" prefWidth="78.0" text="Cancel" visible="false" />
                   <Button fx:id="btnSave" layoutX="683.0" layoutY="155.0" mnemonicParsing="false" onAction="#onSave" prefHeight="26.0" prefWidth="78.0" text="Save" visible="false" />
                   <Label fx:id="txtMessage" layoutX="328.0" layoutY="400.0" prefHeight="127.0" prefWidth="538.0" />
                   <Label layoutX="45.0" layoutY="464.0" prefHeight="27.0" prefWidth="69.0" text="Number of " />
                   <TextField fx:id="txtNumber" layoutX="123.0" layoutY="465.0" />
-                  <Button fx:id="btnBuy" layoutX="65.0" layoutY="500.0" mnemonicParsing="false" onAction="#onNew" prefHeight="26.0" prefWidth="78.0" text="Buy" />
-                  <Button fx:id="btnSell" layoutX="151.0" layoutY="500.0" mnemonicParsing="false" onAction="#onNew" prefHeight="26.0" prefWidth="78.0" text="Sell" />
+                  <Button fx:id="btnBuy" layoutX="65.0" layoutY="500.0" mnemonicParsing="false" onAction="#onBuy" prefHeight="26.0" prefWidth="78.0" text="Buy" />
+                  <Button fx:id="btnSell" layoutX="151.0" layoutY="500.0" mnemonicParsing="false" onAction="#onSell" prefHeight="26.0" prefWidth="78.0" text="Sell" />
                   <Label layoutX="46.0" layoutY="11.0" prefHeight="27.0" prefWidth="116.0" text="List of products">
                      <font>
                         <Font name="System Bold" size="12.0" />

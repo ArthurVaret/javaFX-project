@@ -96,7 +96,7 @@ public class DBManager {
             }
             else {
                 sql = "INSERT INTO products(name,type,price,stock,size) VALUES (?, ?, ?, ?, ?);";
-                myStmt.setInt(5,product.getSize());
+
             }
             myStmt = myConn.prepareStatement(sql);
             myStmt.setString(1, product.getName());
@@ -104,12 +104,13 @@ public class DBManager {
             myStmt.setDouble(3, product.getPrice());
             myStmt.setInt(4, product.getNbItems());
 
+            if (type != "accessory") myStmt.setInt(5,product.getSize());
 
 
 
-            ResultSet res = myStmt.executeQuery();
+            int res = myStmt.executeUpdate();
             System.out.println("Product added");
-            return res.next();
+            return res == 1;
         } catch(SQLException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -119,20 +120,20 @@ public class DBManager {
         }
     }
 
-    public String deleteProduct(Product product){
+    public Boolean deleteProduct(int id){
         Connection myConn=null;
         PreparedStatement myStmt = null;
         try {
             myConn = this.Connector();
             String sql = "DELETE FROM products WHERE id=?;";
             myStmt = myConn.prepareStatement(sql);
-            myStmt.setInt(1,product.getId());
-            boolean res = myStmt.execute();
+            myStmt.setInt(1,id);
+            int res = myStmt.executeUpdate();
             System.out.println("Product deleted");
-            return res ? "Deleted " + product : "Something occurred";
+            return res==1;
         } catch(Exception e) {
             System.out.println(e.getMessage());
-            return e.getMessage();
+            return false;
         } finally {
             close(myConn,myStmt,null);
         }
