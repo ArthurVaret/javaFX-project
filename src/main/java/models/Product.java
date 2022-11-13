@@ -1,25 +1,19 @@
 package models;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public abstract class Product implements Discount, Comparable<Product>{
-    private static AtomicInteger count = new AtomicInteger(1);
-    private static double income = 0;
-    private int id;
-    private int number;
+    private final int id;
     private String name;
     private double price;
+    private double cost;
     private int stock;
-    protected Product(int id, String name, double price, int stock){
+    protected Product(int id, String name, double price, double cost, int stock){
         this.id = id;
-        this.number = count.getAndIncrement();
-        this.name=name;
+        this.name = name;
         setPrice(price);
+        setCost(cost);
         setStock(stock);
     }
     public int getId() { return id; }
-
-    public void setId(int id) { this.id = id; }
 
     public String getName(){
         return this.name;
@@ -27,23 +21,6 @@ public abstract class Product implements Discount, Comparable<Product>{
     public void setName(String name){
         this.name=name;
     }
-
-    public static double getIncome() {
-        return income;
-    }
-
-    public static void setIncome(double income) {
-        Product.income = income;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
 
     public double getPrice() {
         return price;
@@ -59,9 +36,8 @@ public abstract class Product implements Discount, Comparable<Product>{
             }
         }
         catch(IllegalArgumentException e){
-            System.out.println(e);
+            e.printStackTrace();
         }
-
     }
 
     public int getStock() {
@@ -78,7 +54,25 @@ public abstract class Product implements Discount, Comparable<Product>{
             }
         }
         catch(IllegalArgumentException e){
-            System.out.println(e);
+            e.printStackTrace();
+        }
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public void setCost(double cost) {
+        try {
+            if(cost >=0){
+                this.cost = cost;
+            }
+            else{
+                throw new IllegalArgumentException("Negative number");
+            }
+        }
+        catch(IllegalArgumentException e){
+            e.printStackTrace();
         }
     }
 
@@ -88,23 +82,7 @@ public abstract class Product implements Discount, Comparable<Product>{
     public String toString() {
         return id + ". " + name;
     }
-    public void sell(int nbItems){
-        try {
-            if(nbItems<= getStock()){
-                setIncome(getIncome()+(nbItems*getPrice()));
-                setStock(getStock()-nbItems);
-            }
-            else{
-                throw new IllegalArgumentException("Product unavailable");
-            }
-        }
-        catch(IllegalArgumentException e) {
-            System.out.println(e);
-        }
-    }
-    public void purchase(int nbItems){
-        setStock(getStock()+nbItems);
-    }
+
     public void applyDiscount(){
 
     }
@@ -123,6 +101,7 @@ public abstract class Product implements Discount, Comparable<Product>{
                 p.getType().equals(this.getType()) &&
                 p.getPrice() == this.price &&
                 p.getStock() == this.stock &&
+                p.getCost() == this.cost &&
                 p.getSize() == this.getSize()
                 ;
     }

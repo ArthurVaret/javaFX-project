@@ -6,8 +6,7 @@ drop table if exists products;
 create table if not exists products(
 	id int primary key auto_increment,
     name varchar(20),
-    type enum("cloth", "shoe", "accessory"),
-	colour varchar(20) default null,
+    type enum("Cloth", "Shoe", "Accessory"),
 	stock int check(stock >= 0),
 	price double check(price >= 0),
     cost double default 0 check(cost >= 0),
@@ -19,7 +18,7 @@ create table if not exists products(
 drop table if exists orders;
 create table if not exists orders(
 	id int primary key auto_increment,
-    orderType enum('sell','purchase'),
+    orderType enum('sell','buy'),
     dateOrder date default now()
 	);
 

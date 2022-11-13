@@ -16,6 +16,10 @@ import service.DBManager;
 
 public class StoreController implements Initializable {
     @FXML
+    public Label lblIncome;
+    @FXML
+    public Label lblCost;
+    @FXML
     private Label lblSize;
     @FXML
     private TextField txtName;
@@ -68,11 +72,10 @@ public class StoreController implements Initializable {
 
         manager = new DBManager();
         initializeObservable();
-
         initializeComboBox();
         initializeProductListView();
-        listViewProducts.getSelectionModel().selectedItemProperty().addListener(e->displayProductDetails(listViewProducts.getSelectionModel().getSelectedItem()));
-        cbType.getSelectionModel().selectedItemProperty().addListener(e->displaySizesIfNotAccessory(cbType.getSelectionModel().getSelectedItem()));
+        initializeDashboard();
+        initializeListener();
     }
 
     public void initializeObservable() {
@@ -109,7 +112,16 @@ public class StoreController implements Initializable {
             listViewProducts.setItems(observableProduct);
         }
     }
-
+    public void initializeDashboard() {
+        Double incomeTotal = manager.getDashboardValue("sell");
+        Double costTotal = manager.getDashboardValue("buy");
+        if (incomeTotal >= 0) lblIncome.setText(incomeTotal.toString());
+        if (costTotal >= 0) lblCost.setText(costTotal.toString());
+    }
+    public void initializeListener() {
+        listViewProducts.getSelectionModel().selectedItemProperty().addListener(e->displayProductDetails(listViewProducts.getSelectionModel().getSelectedItem()));
+        cbType.getSelectionModel().selectedItemProperty().addListener(e->displaySizesIfNotAccessory(cbType.getSelectionModel().getSelectedItem()));
+    }
     private void displayProductDetails(Product selectedProduct) {
         if(selectedProduct != null){
             selected = selectedProduct;
@@ -117,12 +129,16 @@ public class StoreController implements Initializable {
             // showing buttons
             if (!btnDelete.isVisible()) btnDelete.setVisible(true);
             if (!btnModify.isVisible()) btnModify.setVisible(true);
+            if (!txtNumber.isMouseTransparent())        txtNumber.setMouseTransparent(true);
+            if (txtNumber.isFocusTraversable())         txtNumber.setFocusTraversable(false);
+            if (btnBuy.isDisabled())                    btnBuy.setDisable(false);
+            if (btnSell.isDisabled())                   btnSell.setDisable(false);
 
             // Filling fields
             txtName.setText(selected.getName());
             txtStock.setText(String.valueOf(selected.getStock()));
             txtPrice.setText(String.valueOf(selected.getPrice()));
-            txtCost.setText(String.valueOf(selected.getPrice()));
+            txtCost.setText(String.valueOf(selected.getCost()));
 
             switch (selected.getType()) {
                 case "Cloth" -> {
@@ -150,6 +166,10 @@ public class StoreController implements Initializable {
         } else {
             if (btnDelete.isVisible()) btnDelete.setVisible(false);
             if (btnModify.isVisible()) btnModify.setVisible(false);
+            if (txtNumber.isMouseTransparent())         txtNumber.setMouseTransparent(false);
+            if (!txtNumber.isFocusTraversable())        txtNumber.setFocusTraversable(true);
+            if (!btnBuy.isDisabled())                   btnBuy.setDisable(true);
+            if (!btnSell.isDisabled())                  btnSell.setDisable(true);
         }
     }
     private void displaySizesIfNotAccessory(String selectedType) {
@@ -169,11 +189,11 @@ public class StoreController implements Initializable {
 
     private void clearFields() {
         listViewProducts.getSelectionModel().clearSelection();
-        txtName.setText("");
-        txtStock.setText("");
-        txtPrice.setText("");
-        txtCost.setText("");
-        txtPromo.setText("");
+        txtName.clear();
+        txtStock.clear();
+        txtPrice.clear();
+        txtCost.clear();
+        txtPromo.clear();
         cbType.setValue("");
         cbSize.setValue(0);
         cbSize.setPromptText("Choose a size");
@@ -181,10 +201,10 @@ public class StoreController implements Initializable {
     }
     private void disableProductList() {
         if (!listViewProducts.isMouseTransparent()) listViewProducts.setMouseTransparent(true);
-        if (listViewProducts.isFocusTraversable()) listViewProducts.setFocusTraversable(false);
+        if (listViewProducts.isFocusTraversable())  listViewProducts.setFocusTraversable(false);
     }
     private void enableProductList() {
-        if (listViewProducts.isMouseTransparent()) listViewProducts.setMouseTransparent(false);
+        if (listViewProducts.isMouseTransparent())  listViewProducts.setMouseTransparent(false);
         if (!listViewProducts.isFocusTraversable()) listViewProducts.setFocusTraversable(true);
     }
 
@@ -216,139 +236,211 @@ public class StoreController implements Initializable {
         observableProduct.remove(p);
         listViewProducts.setItems(observableProduct); // refresh listView
     }
-
     private void updateProductInList(int i, Product p){
         productList.set(i, p);
         observableProduct.set(i, p);
         listViewProducts.setItems(observableProduct);
     }
 
-    private boolean isInputsInvalid() {
-        if (cbType.getValue() == null || cbType.getValue().isEmpty()) return false;
-        if (cbSize.getValue() == null) return false;
+    private boolean checkFields() {
+        try {
+            if (cbType.getValue() == null || cbType.getValue().isEmpty()) throw new IllegalArgumentException("Product type error");
+            if (cbSize.getValue() == null) throw new IllegalArgumentException("Product size error");
+            if (txtName.getText().isEmpty()) throw new IllegalArgumentException("Product name empty");
+            if (txtPrice.getText().isEmpty()) throw new IllegalArgumentException("Product price empty");
+            if (txtCost.getText().isEmpty()) throw new IllegalArgumentException("Product price empty");
 
-        // check for size depending on product's type
-        boolean sizeValid = true;
-        int size = cbSize.getValue();
-        String selectedType = cbType.getValue();
-        if (selectedType.equals("Shoe")) sizeValid = shoeSizeList.contains(size);
-        if (selectedType.equals("Accessory")) sizeValid = clothSizeList.contains(size);
-
-        return
-            sizeValid &&
-            !txtName.getText().isEmpty() &&
-            !txtPrice.getText().isEmpty() &&
-            !txtStock.getText().isEmpty()
-            ;
+            try {
+                Double.parseDouble(txtPrice.getText());
+                Double.parseDouble(txtCost.getText());
+                Integer.parseInt(txtStock.getText());
+            } catch (IllegalArgumentException e) {
+                error("Number's fields incorrect");
+                System.out.println(e.getMessage());
+                return false;
+            }
+            // check for size depending on product's type
+            boolean sizeValid = true;
+            int size = cbSize.getValue();
+            String selectedType = cbType.getValue();
+            if (selectedType.equals("Shoe")) sizeValid = shoeSizeList.contains(size);
+            else if (selectedType.equals("Cloth")) sizeValid = clothSizeList.contains(size);
+            return sizeValid;
+        } catch (IllegalArgumentException e) {
+            error(e.getMessage());
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
-
+    @FXML
     public void onNew() {
         clearFields();
         createMode();
     }
+    @FXML
     public void onCancel(){
         clearFields();
         normalMode();
     }
+    @FXML
     public void onSave(){
-        // check inputs
-        if (isInputsInvalid()) {
-            error("Please enter correct fields");
-            return;
+        try {
+            // check inputs
+            if (checkFields()) {
+                // storing inputs
+                String type = cbType.getValue();
+                String name = txtName.getText();
+                double price = Double.parseDouble(txtPrice.getText());
+                double cost = Double.parseDouble(txtCost.getText());
+                int stock = Integer.parseInt(txtStock.getText());
+                int size = cbSize.getValue();
+
+                Product product = null;
+
+                // getting the biggest id
+                int biggestId = -1;
+                for (Product p:listViewProducts.getItems()) {
+                    biggestId = Math.max(p.getId(),biggestId);
+                }
+
+                switch (type) {
+                    case "Cloth" ->     product = new Cloth(biggestId+1,name,price,cost,stock,size);
+                    case "Shoe" ->      product = new Shoe(biggestId+1,name,price,cost,stock,size);
+                    case "Accessory" -> product = new Accessory(biggestId+1,name,price,cost,stock);
+                }
+
+                if (product == null)
+                    throw new IllegalArgumentException("Couldn't understand the described product, please check");
+
+                if (manager.addProduct(product)){
+                    message("Product added ! :)");
+                    onCancel();
+                    initializeProductListView();
+                } else
+                    throw new IllegalArgumentException("Oh no, there is a bug :(");
+            }
+        } catch (IllegalArgumentException e) {
+            error(e.getMessage());
+            System.out.println(e.getMessage());
         }
-
-        // storing inputs
-        String type = cbType.getValue();
-        String name = txtName.getText();
-        double price = Double.parseDouble(txtPrice.getText());
-        int stock = Integer.parseInt(txtStock.getText());
-        int size = cbSize.getValue();
-
-        Product product = null;
-
-        // getting the biggest id
-        int biggestId = -1;
-        for (Product p:listViewProducts.getItems()) {
-            biggestId = Math.max(p.getId(),biggestId);
-        }
-
-        switch (type) {
-            case "Cloth" ->     product = new Cloth(biggestId+1,name,price,stock,size);
-            case "Shoe" ->      product = new Shoe(biggestId+1,name,price,stock,size);
-            case "Accessory" -> product = new Accessory(biggestId+1,name,price,stock);
-        }
-
-        if (product == null) {
-            error("Couldn't understand the described product, please check");
-            return;
-        }
-
-        if (manager.addProduct(product)){
-//            addProductInList(product); // refresh listView
-            message("Product added ! :)");
-            onCancel();
-            initializeProductListView();
-        } else error("Oh no, there is a bug :(");
     }
+    @FXML
     public void onModify(){
-        if (selected != null) {
-            // check for fields
-            if (!isInputsInvalid()) {
-                error("Please enter correct fields");
-                return;
+        try {
+            if (selected != null && checkFields()) {
+                // check if we changed any property
+                String type = cbType.getValue();
+                String name = txtName.getText();
+                double price = Double.parseDouble(txtPrice.getText());
+                double cost = Double.parseDouble(txtPrice.getText());
+                int stock = Integer.parseInt(txtStock.getText());
+                int size = cbSize.getValue();
+
+                Product product = null;
+
+                switch (type) {
+                    case "Cloth" ->     product = new Cloth(selected.getId(),name,price,cost,stock,size);
+                    case "Shoe" ->      product = new Shoe(selected.getId(),name,price,cost,stock,size);
+                    case "Accessory" -> product = new Accessory(selected.getId(),name,price,cost,stock);
+                }
+
+                if (product == null)
+                    throw new IllegalArgumentException("Couldn't understand the described product, please check");
+
+                int index = productList.indexOf(selected);
+                if (index == -1 && selected == productList.get(index))
+                    throw new IllegalArgumentException("Change a property if you want to update ! Index : " + index);
+
+                if (manager.updateProduct(product)) {
+                    normalMode();
+                    message("Product updated !");
+                    initializeProductListView();
+                }
+                else
+                    error("Oh no, there is a bug :(");
             }
-            // check if we changed any property
-            String type = cbType.getValue();
-            String name = txtName.getText();
-            double price = Double.parseDouble(txtPrice.getText());
-            int stock = Integer.parseInt(txtStock.getText());
-            int size = cbSize.getValue();
+            else
+                throw new IllegalArgumentException("No product selected, can't modify");
+        } catch (IllegalArgumentException e) {
+            error(e.getMessage());
+            System.out.println(e.getMessage());
+        }
 
-            Product product = null;
-
-            switch (type) {
-                case "Cloth" ->     product = new Cloth(selected.getId(),name,price,stock,size);
-                case "Shoe" ->      product = new Shoe(selected.getId(),name,price,stock,size);
-                case "Accessory" -> product = new Accessory(selected.getId(),name,price,stock);
-            }
-
-            if (product == null) {
-                error("Couldn't understand the described product, please check");
-                return;
-            }
-
-            int index = productList.indexOf(selected);
-            if (index == -1 && selected == productList.get(index)) {
-                System.out.println("Index : " + index);
-                error("Change a property if you want to update !");
-                return;
-            }
-
-            if (manager.updateProduct(product)) {
-//                updateProductInList(index, product);
-                normalMode();
-                message("Product updated !");
-                initializeProductListView();
-            } else error("Oh no, there is a bug :(");
-        } else error("No product selected");
     }
+    @FXML
     public void onDelete(){
-//        System.out.println(listViewProducts.getSelectionModel().getSelectedItem().getId());
-        if (selected != null) {
-            int id = selected.getId();
-            if (manager.deleteProduct(id)){
-                message("Product deleted !");
-                deleteProductInList(selected);
+        try {
+            if (selected != null) {
+                int id = selected.getId();
+                if (manager.deleteProduct(id)){
+                    message("Product deleted !");
+                    deleteProductInList(selected);
+                } else
+                    throw new IllegalArgumentException("Oh no, there is a bug :(");
+            } else
+                throw new IllegalArgumentException("No product selected");
+        } catch (IllegalArgumentException e) {
+            error(e.getMessage());
+            System.out.println(e.getMessage());
+        }
+
+    }
+    private void orderAction(String action){
+        try {
+            if (selected != null) {
+                String stringNumber = txtNumber.getText();
+                if (stringNumber.isEmpty()) {
+                    throw new IllegalArgumentException(String.format("Please write down how many you want to %s !", stringNumber));
+                }
+                if (!stringNumber.matches("^\\d$")) {
+                    throw new IllegalArgumentException("Please write a correct number");
+                }
+                int amount = Integer.parseInt(stringNumber);
+                switch (action) {
+                    case "buy" -> {
+                        if (manager.orderProduct(selected,action,amount)) {
+                            initializeDashboard();
+                            selected.setStock(selected.getStock() + amount);
+                            txtNumber.clear();
+                            message(String.format("Ordered %s product", stringNumber));
+                        } else {
+                            error("Oh no there is a bug :(");
+                        }
+                    }
+                    case "sell" -> {
+                        // check if the amount in input is higher than the selected product
+                        if (selected.getStock() - amount < 0)
+                            throw new IllegalArgumentException(String.format("Can't sell more, products are limited (%d > %d)",amount,selected.getStock()));
+
+                        if (manager.orderProduct(selected,action,amount)) {
+                            initializeDashboard();
+                            selected.setStock(selected.getStock() - amount);
+                            txtNumber.clear();
+                            message(String.format("Sold %s product", stringNumber));
+                        }
+                        else
+                            throw new IllegalArgumentException("Oh no there is a bug :(");
+                    }
+                    default -> throw new IllegalArgumentException("Can't understand the action");
+                }
+            } else {
+                throw new IllegalArgumentException("No product, can't buy");
             }
-            else error("Oh no, there is a bug :(");
+        } catch (IllegalArgumentException e) {
+            error(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
+
+    @FXML
     public void onBuy(){
-
+        orderAction("buy");
     }
+    @FXML
     public void onSell(){
-
+        orderAction("sell");
     }
+
     private void message(String m){
         txtMessage.setText(m);
         txtMessage.setStyle("-fx-text-fill: green;");

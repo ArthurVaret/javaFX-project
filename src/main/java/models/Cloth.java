@@ -3,8 +3,8 @@ package models;
 public class Cloth extends Product{
     private int size;
 
-    public Cloth(int id, String name, double prize, int stock, int size){
-        super(id, name, prize, stock);
+    public Cloth(int id, String name, double prize, double cost, int stock, int size){
+        super(id, name, prize, cost, stock);
         setSize(size);
     }
 
