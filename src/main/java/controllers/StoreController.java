@@ -76,6 +76,7 @@ public class StoreController implements Initializable {
         initializeProductListView();
         initializeDashboard();
         initializeListener();
+        disableOrderFields();
     }
 
     public void initializeObservable() {
@@ -129,10 +130,7 @@ public class StoreController implements Initializable {
             // showing buttons
             if (!btnDelete.isVisible()) btnDelete.setVisible(true);
             if (!btnModify.isVisible()) btnModify.setVisible(true);
-            if (!txtNumber.isMouseTransparent())        txtNumber.setMouseTransparent(true);
-            if (txtNumber.isFocusTraversable())         txtNumber.setFocusTraversable(false);
-            if (btnBuy.isDisabled())                    btnBuy.setDisable(false);
-            if (btnSell.isDisabled())                   btnSell.setDisable(false);
+            enableOrderFields();
 
             // Filling fields
             txtName.setText(selected.getName());
@@ -157,19 +155,16 @@ public class StoreController implements Initializable {
                 }
                 case "Accessory" -> {
                     hideSizeCb();
-                    cbSize.setValue(null);
+                    cbSize.setValue(0);
                     cbType.setValue("Accessory");
                 }
                 default -> {
                 }
             }
         } else {
-            if (btnDelete.isVisible()) btnDelete.setVisible(false);
-            if (btnModify.isVisible()) btnModify.setVisible(false);
-            if (txtNumber.isMouseTransparent())         txtNumber.setMouseTransparent(false);
-            if (!txtNumber.isFocusTraversable())        txtNumber.setFocusTraversable(true);
-            if (!btnBuy.isDisabled())                   btnBuy.setDisable(true);
-            if (!btnSell.isDisabled())                  btnSell.setDisable(true);
+            if (btnDelete.isVisible())      btnDelete.setVisible(false);
+            if (btnModify.isVisible())      btnModify.setVisible(false);
+            disableOrderFields();
         }
     }
     private void displaySizesIfNotAccessory(String selectedType) {
@@ -185,6 +180,16 @@ public class StoreController implements Initializable {
     private void hideSizeCb() {
         if (lblSize.isVisible()) lblSize.setVisible(false);
         if (cbSize.isVisible()) cbSize.setVisible(false);
+    }
+    private void enableOrderFields() {
+        if (txtNumber.isDisabled()) txtNumber.setDisable(false);
+        if (btnBuy.isDisabled())    btnBuy.setDisable(false);
+        if (btnSell.isDisabled())   btnSell.setDisable(false);
+    }
+    private void disableOrderFields() {
+        if (!txtNumber.isDisabled())    txtNumber.setDisable(true);
+        if (!btnBuy.isDisabled())       btnBuy.setDisable(true);
+        if (!btnSell.isDisabled())      btnSell.setDisable(true);
     }
 
     private void clearFields() {
@@ -210,6 +215,7 @@ public class StoreController implements Initializable {
 
     private void createMode(){
         disableProductList();
+        disableOrderFields();
         if (!btnCancel.isVisible()) btnCancel.setVisible(true);
         if (!btnSave.isVisible())   btnSave.setVisible(true);
         if (btnCreate.isVisible())  btnCreate.setVisible(false);
@@ -219,29 +225,18 @@ public class StoreController implements Initializable {
 
     private void normalMode(){
         enableProductList();
+        enableOrderFields();
         if (btnCancel.isVisible())  btnCancel.setVisible(false);
         if (btnSave.isVisible())    btnSave.setVisible(false);
         if (!btnCreate.isVisible()) btnCreate.setVisible(true);
         if (!btnDelete.isVisible()) btnDelete.setVisible(true);
         if (!btnModify.isVisible()) btnModify.setVisible(true);
     }
-
-    private void addProductInList(Product p) {
-        productList.add(p);
-        observableProduct.add(p);
-        listViewProducts.setItems(observableProduct);
-    }
     private void deleteProductInList(Product p) {
         productList.remove(p);
         observableProduct.remove(p);
         listViewProducts.setItems(observableProduct); // refresh listView
     }
-    private void updateProductInList(int i, Product p){
-        productList.set(i, p);
-        observableProduct.set(i, p);
-        listViewProducts.setItems(observableProduct);
-    }
-
     private boolean checkFields() {
         try {
             if (cbType.getValue() == null || cbType.getValue().isEmpty()) throw new IllegalArgumentException("Product type error");
