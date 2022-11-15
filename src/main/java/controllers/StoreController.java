@@ -34,7 +34,7 @@ public class StoreController implements Initializable {
     @FXML
     private Label txtMessage;
     @FXML
-    private TextField txtPromo;
+    private CheckBox checkPromo;
     @FXML
     private ComboBox<String> cbType;
     @FXML
@@ -147,6 +147,7 @@ public class StoreController implements Initializable {
             txtStock.setText(String.valueOf(selected.getStock()));
             txtPrice.setText(String.valueOf(selected.getPrice()));
             txtCost.setText(String.valueOf(selected.getCost()));
+            checkPromo.setSelected(selected.getPromotion());
 
             switch (selected.getType()) {
                 case "Cloth" -> {
@@ -208,7 +209,7 @@ public class StoreController implements Initializable {
         txtStock.clear();
         txtPrice.clear();
         txtCost.clear();
-        txtPromo.clear();
+        checkPromo.setSelected(false);
         cbType.setValue("");
         cbSize.setValue(0);
         cbSize.setPromptText("Choose a size");
@@ -260,7 +261,7 @@ public class StoreController implements Initializable {
                 Double.parseDouble(txtCost.getText());
                 Integer.parseInt(txtStock.getText());
             } catch (IllegalArgumentException e) {
-                error("Number's fields incorrect");
+                error("A field is incorrect");
                 System.out.println(e.getMessage());
                 return false;
             }
@@ -299,6 +300,7 @@ public class StoreController implements Initializable {
                 double cost = Double.parseDouble(txtCost.getText());
                 int stock = Integer.parseInt(txtStock.getText());
                 int size = cbSize.getValue();
+                boolean promo = checkPromo.isSelected();
 
                 Product product = null;
 
@@ -309,9 +311,9 @@ public class StoreController implements Initializable {
                 }
 
                 switch (type) {
-                    case "Cloth" ->     product = new Cloth(biggestId+1,name,price,cost,stock,size);
-                    case "Shoe" ->      product = new Shoe(biggestId+1,name,price,cost,stock,size);
-                    case "Accessory" -> product = new Accessory(biggestId+1,name,price,cost,stock);
+                    case "Cloth" ->     product = new Cloth(biggestId+1,name,price,cost,stock,size,promo);
+                    case "Shoe" ->      product = new Shoe(biggestId+1,name,price,cost,stock,size,promo);
+                    case "Accessory" -> product = new Accessory(biggestId+1,name,price,cost,stock,promo);
                 }
 
                 if (product == null)
@@ -340,13 +342,14 @@ public class StoreController implements Initializable {
                 double cost = Double.parseDouble(txtPrice.getText());
                 int stock = Integer.parseInt(txtStock.getText());
                 int size = cbSize.getValue();
+                boolean promo = checkPromo.isSelected();
 
                 Product product = null;
 
                 switch (type) {
-                    case "Cloth" ->     product = new Cloth(selected.getId(),name,price,cost,stock,size);
-                    case "Shoe" ->      product = new Shoe(selected.getId(),name,price,cost,stock,size);
-                    case "Accessory" -> product = new Accessory(selected.getId(),name,price,cost,stock);
+                    case "Cloth" ->     product = new Cloth(selected.getId(),name,price,cost,stock,size,promo);
+                    case "Shoe" ->      product = new Shoe(selected.getId(),name,price,cost,stock,size,promo);
+                    case "Accessory" -> product = new Accessory(selected.getId(),name,price,cost,stock,promo);
                 }
 
                 if (product == null)
@@ -444,6 +447,10 @@ public class StoreController implements Initializable {
     @FXML
     public void onSell(){
         orderAction("sell");
+    }
+    @FXML
+    public void onPromo() {
+        System.out.println(checkPromo.isSelected());
     }
 
     private void message(String m){

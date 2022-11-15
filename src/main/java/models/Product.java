@@ -6,9 +6,12 @@ public abstract class Product implements Discount, Comparable<Product>{
     private double price;
     private double cost;
     private int stock;
-    protected Product(int id, String name, double price, double cost, int stock){
+    private boolean promotion;
+
+    protected Product(int id, String name, double price, double cost, int stock, boolean promotion){
         this.id = id;
         this.name = name;
+        this.promotion = promotion;
         setPrice(price);
         setCost(cost);
         setStock(stock);
@@ -76,6 +79,14 @@ public abstract class Product implements Discount, Comparable<Product>{
         }
     }
 
+    public boolean getPromotion() {
+        return promotion;
+    }
+
+    public void setPromotion(boolean promotion) {
+        this.promotion = promotion;
+    }
+
     public abstract String getType();
     public abstract int getSize();
     @Override
@@ -83,9 +94,7 @@ public abstract class Product implements Discount, Comparable<Product>{
         return id + ". " + name;
     }
 
-    public void applyDiscount(){
-
-    }
+    public abstract void applyDiscount();
 
     @Override
     public int compareTo(Product p){

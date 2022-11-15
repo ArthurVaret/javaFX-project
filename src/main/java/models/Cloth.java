@@ -3,8 +3,9 @@ package models;
 public class Cloth extends Product{
     private int size;
 
-    public Cloth(int id, String name, double prize, double cost, int stock, int size){
-        super(id, name, prize, cost, stock);
+    public Cloth(int id, String name, double prize, double cost, int stock, int size, boolean promotion){
+        super(id, name, prize, cost, stock, promotion);
+        if (promotion) this.applyDiscount();
         setSize(size);
     }
 
@@ -13,6 +14,11 @@ public class Cloth extends Product{
     }
 
     public String getType() { return "Cloth"; }
+
+    @Override
+    public void applyDiscount() {
+        setPrice(getPrice() - getPrice() * 0.3);
+    }
 
     public void setSize(int size) {
         try {

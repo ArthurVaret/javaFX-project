@@ -29,14 +29,15 @@ public class DBManager {
                 double productCost =    res.getDouble("cost");
                 int productStock =      res.getInt("stock");
                 int productSize =       res.getInt("size");
+                boolean productPromo =  res.getBoolean("isOnSale");
 
                 Product product = null;
 
                 // type in product table
                 switch (type) {
-                    case "Cloth" ->     product = new Cloth(productId,productName,productPrice,productCost,productStock,productSize);
-                    case "Shoe" ->      product = new Shoe(productId,productName,productPrice,productCost,productStock,productSize);
-                    case "Accessory" -> product = new Accessory(productId,productName,productPrice,productCost,productStock);
+                    case "Cloth" ->     product = new Cloth(productId,productName,productPrice,productCost,productStock,productSize,productPromo);
+                    case "Shoe" ->      product = new Shoe(productId,productName,productPrice,productCost,productStock,productSize,productPromo);
+                    case "Accessory" -> product = new Accessory(productId,productName,productPrice,productCost,productStock,productPromo);
                 }
                 productList.add(product);
             }
@@ -80,8 +81,8 @@ public class DBManager {
             String type = product.getType();
             String sql;
 
-            if (type.equals("Accessory"))   sql = "INSERT INTO products(name,type,price,cost,stock) VALUES (?,?,?,?,?);";
-            else                            sql = "INSERT INTO products(name,type,price,cost,stock,size) VALUES (?,?,?,?,?,?);";
+            if (type.equals("Accessory"))   sql = "INSERT INTO products(name,type,price,cost,stock,isOnSale) VALUES (?,?,?,?,?,?);";
+            else                            sql = "INSERT INTO products(name,type,price,cost,stock,isOnSale,size) VALUES (?,?,?,?,?,?,?);";
 
             myStmt = myConn.prepareStatement(sql);
             myStmt.setString(1, product.getName());
@@ -89,8 +90,9 @@ public class DBManager {
             myStmt.setDouble(3, product.getPrice());
             myStmt.setDouble(4, product.getCost());
             myStmt.setInt(5, product.getStock());
+            myStmt.setBoolean(6, product.getPromotion());
 
-            if (!type.equals("Accessory")) myStmt.setInt(6,product.getSize());
+            if (!type.equals("Accessory")) myStmt.setInt(7,product.getSize());
 
             int res = myStmt.executeUpdate();
             System.out.println("Product added");
@@ -130,16 +132,16 @@ public class DBManager {
         PreparedStatement s = null;
         try {
             c = this.getConnection();
-            String sql = "UPDATE products SET name = ?, type = ?, size = ?, price = ?, cost = ?, stock = ? WHERE id = ? ";
+            String sql = "UPDATE products SET name = ?, type = ?, size = ?, price = ?, cost = ?, stock = ?, isOnSale = ? WHERE id = ? ";
             s = c.prepareStatement(sql);
             s.setString(1, product.getName());
             s.setString(2, product.getType());
             s.setInt(3,product.getSize());
             s.setDouble(4,product.getPrice());
             s.setDouble(5,product.getCost());
-            s.setInt(6,product.getStock());       // stock
-
-            s.setInt(7,product.getId());            // id
+            s.setInt(6,product.getStock());
+            s.setBoolean(7, product.getPromotion());
+            s.setInt(8,product.getId());
 
             int res = s.executeUpdate();
             System.out.println("Product updated");
