@@ -179,6 +179,15 @@ public class DBManager {
                     rows = s.executeUpdate();
                     if (rows == 0) throw new SQLException("Inserting quantityOrder failed, no rows affected");
                     else System.out.println(s);
+
+                    String updateProduct = "UPDATE products SET stock = ? WHERE id = ?";
+                    s = c.prepareStatement(updateProduct);
+                    s.setInt(1,p.getStock());
+                    s.setInt(2, p.getId());
+                    rows = s.executeUpdate();
+                    if (rows == 0) throw new SQLException("Updated product stock");
+                    else System.out.println(s);
+
                     return rows == 1;
                 } else {
                     throw new SQLException("Creating order failed, no ID obtained.");
@@ -228,7 +237,30 @@ public class DBManager {
     }
 
     public ArrayList<Order> loadOrders() {
-        // SELECT o.id, name, orderType operation, quantity FROM products p INNER JOIN quantityOrder q ON p.id = q.productId INNER JOIN orders o ON o.id = q.orderId;
-        return null;
+        Connection c = null;
+        PreparedStatement s = null;
+        ResultSet r = null;
+        ArrayList<Order> list = null;
+        try {
+            c = getConnection();
+            String sql = "SELECT o.id, name, orderType operation, dateOrder, quantity FROM products p INNER JOIN quantityOrder q ON p.id = q.productId INNER JOIN orders o ON o.id = q.orderId GROUP BY o.id";
+            s = c.prepareStatement(sql);
+            r = s.executeQuery();
+
+            list = new ArrayList<>();
+            while (r.next()) {
+                Order o = new Order(r.getInt("id"), r.getString("name"), r.getString("operation"), r.getInt("quantity"), r.getDate("dateOrder"));
+
+                list.add(o);
+            }
+
+            return list;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return list;
+        } finally {
+            close(c,s,r);
+        }
     }
 }

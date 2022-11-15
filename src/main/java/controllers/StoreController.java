@@ -60,10 +60,12 @@ public class StoreController implements Initializable {
     private ArrayList<Integer> shoeSizeList;
     private ArrayList<Integer> clothSizeList;
     private ArrayList<Product> productList;
+    private ArrayList<Order> orderList;
     private ObservableList<Integer> observableShoeSize;
     private ObservableList<Integer> observableClothSize;
     private ObservableList<String> observableType;
     private ObservableList<Product> observableProduct;
+    private ObservableList<Order> observableOrder;
     private DBManager manager;
     private Product selected;
 
@@ -114,10 +116,18 @@ public class StoreController implements Initializable {
         }
     }
     public void initializeDashboard() {
+        orderList = manager.loadOrders();
+        if (orderList != null) {
+            observableOrder = FXCollections.observableArrayList(orderList);
+            listViewOrder.setItems(observableOrder);
+        }
+
         Double incomeTotal = manager.getDashboardValue("sell");
         Double costTotal = manager.getDashboardValue("buy");
         if (incomeTotal >= 0) lblIncome.setText(incomeTotal.toString());
         if (costTotal >= 0) lblCost.setText(costTotal.toString());
+
+
     }
     public void initializeListener() {
         listViewProducts.getSelectionModel().selectedItemProperty().addListener(e->displayProductDetails(listViewProducts.getSelectionModel().getSelectedItem()));
