@@ -1,5 +1,6 @@
 package controllers;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -8,8 +9,10 @@ import javafx.scene.control.*;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.ResourceBundle;
 
+import javafx.scene.control.cell.PropertyValueFactory;
 import models.*;
 
 import service.DBManager;
@@ -44,6 +47,8 @@ public class StoreController implements Initializable {
     @FXML
     public ListView<Order> listViewOrder;
     @FXML
+    public TableView<Order> tblOrder;
+    @FXML
     private Button btnCreate;
     @FXML
     private Button btnModify;
@@ -57,6 +62,17 @@ public class StoreController implements Initializable {
     public Button btnSell;
     @FXML
     public Button btnBuy;
+    @FXML
+    public TableColumn<Order, Integer> idColumn;
+    @FXML
+    public TableColumn<Order, String> nameColumn;
+    @FXML
+    public TableColumn<Order, String> operationColumn;
+    @FXML
+    public TableColumn<Order, Date> dateColumn;
+    @FXML
+    public TableColumn<Order, Integer> quantityColumn;
+
     private ArrayList<Integer> shoeSizeList;
     private ArrayList<Integer> clothSizeList;
     private ArrayList<Product> productList;
@@ -76,9 +92,11 @@ public class StoreController implements Initializable {
         initializeObservable();
         initializeComboBox();
         initializeProductListView();
+        initializeOrderTableView();
         initializeDashboard();
         initializeListener();
         disableOrderFields();
+        disableForm();
     }
 
     public void initializeObservable() {
@@ -115,19 +133,24 @@ public class StoreController implements Initializable {
             listViewProducts.setItems(observableProduct);
         }
     }
+    public void initializeOrderTableView() {
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        operationColumn.setCellValueFactory(new PropertyValueFactory<>("operation"));
+        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+    }
     public void initializeDashboard() {
         orderList = manager.loadOrders();
         if (orderList != null) {
             observableOrder = FXCollections.observableArrayList(orderList);
-            listViewOrder.setItems(observableOrder);
+            tblOrder.setItems(observableOrder);
         }
 
         Double incomeTotal = manager.getDashboardValue("sell");
         Double costTotal = manager.getDashboardValue("buy");
         if (incomeTotal >= 0) lblIncome.setText(incomeTotal.toString());
         if (costTotal >= 0) lblCost.setText(costTotal.toString());
-
-
     }
     public void initializeListener() {
         listViewProducts.getSelectionModel().selectedItemProperty().addListener(e->displayProductDetails(listViewProducts.getSelectionModel().getSelectedItem()));
@@ -141,6 +164,7 @@ public class StoreController implements Initializable {
             if (!btnDelete.isVisible()) btnDelete.setVisible(true);
             if (!btnModify.isVisible()) btnModify.setVisible(true);
             enableOrderFields();
+            enableForm();
 
             // Filling fields
             txtName.setText(selected.getName());
@@ -223,25 +247,42 @@ public class StoreController implements Initializable {
         if (listViewProducts.isMouseTransparent())  listViewProducts.setMouseTransparent(false);
         if (!listViewProducts.isFocusTraversable()) listViewProducts.setFocusTraversable(true);
     }
-
+    private void disableForm() {
+        if (!txtName.isDisabled())      txtName.setDisable(true);
+        if (!txtPrice.isDisabled())     txtPrice.setDisable(true);
+        if (!txtStock.isDisabled())     txtStock.setDisable(true);
+        if (!checkPromo.isDisabled())   checkPromo.setDisable(true);
+        if (!cbSize.isDisabled())       cbSize.setDisable(true);
+        if (!cbType.isDisabled())        cbType.setDisable(true);
+        if (!txtCost.isDisabled())       txtCost.setDisable(true);
+    }
+    private void enableForm() {
+        if (txtName.isDisabled())       txtName.setDisable(false);
+        if (txtPrice.isDisabled())      txtPrice.setDisable(false);
+        if (txtStock.isDisabled())      txtStock.setDisable(false);
+        if (checkPromo.isDisabled())    checkPromo.setDisable(false);
+        if (cbSize.isDisabled())        cbSize.setDisable(false);
+        if (cbType.isDisabled())        cbType.setDisable(false);
+        if (txtCost.isDisabled())       txtCost.setDisable(false);
+    }
     private void createMode(){
         disableProductList();
         disableOrderFields();
-        if (!btnCancel.isVisible()) btnCancel.setVisible(true);
-        if (!btnSave.isVisible())   btnSave.setVisible(true);
-        if (btnCreate.isVisible())  btnCreate.setVisible(false);
-        if (btnDelete.isVisible())  btnDelete.setVisible(false);
-        if (btnModify.isVisible())  btnModify.setVisible(false);
-    }
+        enableForm();
+        if (!btnCancel.isVisible())     btnCancel.setVisible(true);
+        if (!btnSave.isVisible())       btnSave.setVisible(true);
+        if (btnCreate.isVisible())      btnCreate.setVisible(false);
+        if (btnDelete.isVisible())      btnDelete.setVisible(false);
+        if (btnModify.isVisible())      btnModify.setVisible(false);
 
+    }
     private void normalMode(){
         enableProductList();
-        enableOrderFields();
-        if (btnCancel.isVisible())  btnCancel.setVisible(false);
-        if (btnSave.isVisible())    btnSave.setVisible(false);
-        if (!btnCreate.isVisible()) btnCreate.setVisible(true);
-        if (!btnDelete.isVisible()) btnDelete.setVisible(true);
-        if (!btnModify.isVisible()) btnModify.setVisible(true);
+        disableOrderFields();
+        disableForm();
+        if (btnCancel.isVisible())      btnCancel.setVisible(false);
+        if (btnSave.isVisible())        btnSave.setVisible(false);
+        if (!btnCreate.isVisible())     btnCreate.setVisible(true);
     }
     private void deleteProductInList(Product p) {
         productList.remove(p);

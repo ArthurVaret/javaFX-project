@@ -5,19 +5,19 @@ import java.util.Date;
 public class Order {
     private int id;
     private String name;
-    private String orderType;
+    private String operation;
     private int quantity;
-    private Date dateOrder;
+    private Date date;
 
-    public Order(int id, String name, String orderType, int quantity, Date dateOrder) {
+    public Order(int id, String name, String operation, int quantity, Date date) {
         this.id = id;
         this.name = name;
-        this.orderType = orderType;
+        this.operation = operation;
         this.quantity = quantity;
-        this.dateOrder = dateOrder;
+        this.date = date;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -33,12 +33,12 @@ public class Order {
         this.name = name;
     }
 
-    public String getOrderType() {
-        return orderType;
+    public String getOperation() {
+        return operation;
     }
 
-    public void setOrderType(String orderType) {
-        this.orderType = orderType;
+    public void setOperation(String operation) {
+        this.operation = operation;
     }
 
     public int getQuantity() {
@@ -49,16 +49,16 @@ public class Order {
         this.quantity = quantity;
     }
 
-    public Date getDateOrder() {
-        return dateOrder;
+    public Date getDate() {
+        return date;
     }
 
-    public void setDateOrder(Date dateOrder) {
-        this.dateOrder = dateOrder;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override
     public String toString() {
-        return orderType.toUpperCase() +" (" + quantity + ")" + " : " + dateOrder.toString() + " / " + name;
+        return operation.toUpperCase() +" (" + quantity + ")" + " : " + date.toString() + " / " + name;
     }
 }
