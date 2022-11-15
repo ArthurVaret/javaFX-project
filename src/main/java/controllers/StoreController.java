@@ -146,7 +146,7 @@ public class StoreController implements Initializable {
                     showSizeCb();
                     cbType.setValue("Cloth");
                 }
-                case "shoe" -> {
+                case "Shoe" -> {
                     Shoe shoe = (Shoe) selected;
                     cbSize.setItems(observableShoeSize);
                     cbSize.setValue(shoe.getSize());
