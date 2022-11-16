@@ -31,11 +31,11 @@
             <font>
                <Font name="System Bold" size="36.0" />
             </font></Label>
-         <Label fx:id="lblIncome" layoutX="574.0" layoutY="222.0" text="0" textAlignment="CENTER" textFill="#e40000">
+         <Label fx:id="lblCost" layoutX="574.0" layoutY="222.0" text="0" textAlignment="CENTER" textFill="#e40000">
             <font>
                <Font size="18.0" />
             </font></Label>
-         <Label fx:id="lblCost" layoutX="334.0" layoutY="222.0" text="0" textAlignment="CENTER" textFill="#00c91e">
+         <Label fx:id="lblIncome" layoutX="334.0" layoutY="222.0" text="0" textAlignment="CENTER" textFill="#00c91e">
             <font>
                <Font size="18.0" />
             </font></Label>

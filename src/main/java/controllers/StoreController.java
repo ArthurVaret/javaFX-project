@@ -450,8 +450,10 @@ public class StoreController implements Initializable {
                         if (manager.orderProduct(selected,action,amount)) {
                             initializeDashboard();
                             selected.setStock(selected.getStock() + amount);
+                            manager.updateProduct(selected);
                             txtNumber.clear();
                             message(String.format("Ordered %s product", stringNumber));
+                            initializeDashboard();
                         } else {
                             error("Oh no there is a bug :(");
                         }
@@ -464,8 +466,10 @@ public class StoreController implements Initializable {
                         if (manager.orderProduct(selected,action,amount)) {
                             initializeDashboard();
                             selected.setStock(selected.getStock() - amount);
+                            manager.updateProduct(selected);
                             txtNumber.clear();
                             message(String.format("Sold %s product", stringNumber));
+                            initializeDashboard();
                         }
                         else
                             throw new IllegalArgumentException("Oh no there is a bug :(");
